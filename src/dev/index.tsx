@@ -1,12 +1,8 @@
-import { notDevVar } from "../notDevFile";
-import { createRoot } from "react-dom/client";
 import "./styles.css";
-
-console.log(notDevVar);
-
-const PreviewApp = () => {
-  return <div>Hello World!</div>;
-};
+import "../lib/builtin/intrinsic.css";
+import "../lib/builtin/data-form.css";
+import { createRoot } from "react-dom/client";
+import { PreviewApp } from "./previewApp/previewApp";
 
 const root = createRoot(
   document.querySelector<HTMLDivElement>("#preview-app-root")!
