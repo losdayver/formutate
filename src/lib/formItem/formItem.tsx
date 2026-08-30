@@ -1,5 +1,3 @@
-import { BuiltinCheckbox } from "../builtin/intrinsic/checkbox";
-import { BuiltinInput } from "../builtin/intrinsic/input";
 import { FormItemProps, ItemDescriptor } from "./formItemTypes";
 
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
@@ -54,46 +52,4 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
       {divideAfter && <hr className="lsdvr-data-form-form__divider" />}
     </div>
   );
-};
-
-export const componentFactory = (
-  descriptor: ItemDescriptor,
-  value: any,
-  onChange: (val: any) => void
-) => {
-  switch (descriptor.component) {
-    case "input":
-      return (
-        <BuiltinInput
-          {...descriptor}
-          value={value ?? ""}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      );
-    case "inputNum":
-      return (
-        <BuiltinInput
-          {...descriptor}
-          value={value ?? ""}
-          onChange={(event) => {
-            const value = event.target.value?.replace(/\D/g, "");
-            onChange(value ? Number(value) : null);
-          }}
-        />
-      );
-    case "checkbox":
-      return (
-        <BuiltinCheckbox
-          {...descriptor}
-          checked={Boolean(value)}
-          onChange={(event) => onChange(event.target.checked)}
-        />
-      );
-    case "file":
-      return (
-        <></> // <FileInput {...descriptor} value={value} onPathChange={onChange} />
-      );
-    default:
-      return <></>;
-  }
 };

@@ -28,29 +28,32 @@ export type ItemDescriptor = (
   required?: boolean;
   divideAfter?: boolean;
   hint?: string;
+  disabled?: boolean;
 };
 
-interface InputItemDescriptor extends ComponentPropsWithoutRef<"input"> {
+interface InputItemDescriptor {
   component: "input";
+  componentProps?: ComponentPropsWithoutRef<"input">;
 }
 
-interface InputNumItemDescriptor extends ComponentPropsWithoutRef<"input"> {
+interface InputNumItemDescriptor {
   component: "inputNum";
+  componentProps?: ComponentPropsWithoutRef<"input">;
 }
 
-interface CheckBoxItemDescriptor extends ComponentPropsWithoutRef<"input"> {
+interface CheckBoxItemDescriptor {
   component: "checkbox";
+  componentProps?: ComponentPropsWithoutRef<"input">;
 }
 
-interface FileInputItemDescriptor extends Omit<
-  ComponentPropsWithoutRef<"input">,
-  "onPathChange"
-> {
+interface FileInputItemDescriptor {
   component: "file";
+  componentProps?: ComponentPropsWithoutRef<"input">;
 }
 
-interface ButtonItemDescriptor extends ComponentPropsWithoutRef<"button"> {
+interface ButtonItemDescriptor {
   component: "button";
+  componentProps?: ComponentPropsWithoutRef<"button">;
 }
 
 export interface DescriptorsValueTypes {

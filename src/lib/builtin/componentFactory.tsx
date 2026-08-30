@@ -11,7 +11,7 @@ export const builtinComponentFactory = (
     case "input":
       return (
         <BuiltinInput
-          {...descriptor}
+          {...descriptor?.componentProps}
           value={value ?? ""}
           onChange={(event) => onChange(event.target.value)}
         />
@@ -19,7 +19,7 @@ export const builtinComponentFactory = (
     case "inputNum":
       return (
         <BuiltinInput
-          {...descriptor}
+          {...descriptor?.componentProps}
           type="number"
           value={value ?? ""}
           onChange={(event) => {
@@ -37,7 +37,7 @@ export const builtinComponentFactory = (
     case "checkbox":
       return (
         <BuiltinCheckbox
-          {...descriptor}
+          {...descriptor?.componentProps}
           checked={Boolean(value)}
           onChange={(event) => onChange(event.target.checked)}
         />
