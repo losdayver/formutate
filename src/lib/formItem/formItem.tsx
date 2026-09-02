@@ -1,4 +1,4 @@
-import { FormItemProps, ItemDescriptor } from "./formItemTypes";
+import { FormItemProps } from "./formItemTypes";
 
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   children,

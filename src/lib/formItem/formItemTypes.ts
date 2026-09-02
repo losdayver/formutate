@@ -1,4 +1,6 @@
 import { ComponentPropsWithoutRef, JSX } from "react";
+import { DataFormContextMediator } from "../form/dataFormContext";
+import { FormSchema } from "../form/formTypes";
 
 export interface FormItemNotify<Keys extends string = string> {
   fld: Keys;
@@ -16,7 +18,7 @@ export interface FormItemProps {
   disabled?: boolean;
 }
 
-export type ItemDescriptor = (
+export type ItemDescriptor<Schema extends FormSchema = any> = (
   | InputItemDescriptor
   | CheckBoxItemDescriptor
   | FileInputItemDescriptor
@@ -29,6 +31,17 @@ export type ItemDescriptor = (
   divideAfter?: boolean;
   hint?: string;
   disabled?: boolean;
+  placeholder?: string;
+  onBeforeChange?: (
+    oldVal: any,
+    newVal: any,
+    mediator: DataFormContextMediator<Schema>
+  ) => void;
+  onAfterChange?: (
+    oldVal: any,
+    newVal: any,
+    mediator: DataFormContextMediator<Schema>
+  ) => void;
 };
 
 interface InputItemDescriptor {

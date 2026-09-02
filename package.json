@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch-dev": "vite"
+    "watch-dev": "vite",
+    "build-package": "vite"
   },
   "keywords": [],
   "author": "",

@@ -19,8 +19,9 @@ export const PreviewApp = () => {
       <DataForm
         componentFactory={builtinComponentFactory}
         initialData={{
-          selfTag: "hello world!",
+          selfTag: "oidfun0sdn7u09ascn09anc09asnscdssdds",
         }}
+        onConfirm={(data) => alert(JSON.stringify(data))}
         schema={{
           selfTag: {
             title: "Self tag",
@@ -33,6 +34,12 @@ export const PreviewApp = () => {
             component: "input",
             required: true,
             validator: tagFormValidator,
+            onAfterChange: (_, newVal, mediator) => {
+              mediator.setFormData({
+                ...mediator.formData,
+                distantTag: newVal + "1",
+              });
+            },
           },
           aggressive: {
             title: "Aggressive mode",
