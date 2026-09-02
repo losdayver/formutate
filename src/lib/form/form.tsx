@@ -28,14 +28,20 @@ const DataFormContent = <Schema extends FormSchema>({
     throw new Error("DataFormContent must be rendered inside DataFormProvider");
   }
 
-  const { errors, formData, setFormData, confirm } = mediator;
+  const {
+    errors,
+    formData,
+    setFormData,
+    confirm,
+    schema: mediatedSchema,
+  } = mediator;
 
   return (
     <form className="lsdvr-data-form-form">
       {children ? (
         <></>
       ) : (
-        Object.entries(schema).map(([fldKey, descriptor]) => {
+        Object.entries(mediatedSchema).map(([fldKey, descriptor]) => {
           const error = errors.find((err) => err.fld == fldKey);
           return (
             <FormItem
@@ -49,13 +55,13 @@ const DataFormContent = <Schema extends FormSchema>({
             >
               {componentFactory(descriptor, formData[fldKey], (val: any) => {
                 const oldVal = formData[fldKey];
-                descriptor.onBeforeChange?.(oldVal, val, mediator);
+                descriptor.onBeforeChange?.(oldVal, val, mediator as any);
                 setFormData((prev) =>
                   Object.is(prev[fldKey], val)
                     ? prev
                     : { ...prev, [fldKey]: val }
                 );
-                descriptor.onAfterChange?.(oldVal, val, mediator);
+                descriptor.onAfterChange?.(oldVal, val, mediator as any);
               })}
             </FormItem>
           );

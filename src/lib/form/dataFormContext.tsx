@@ -2,13 +2,15 @@ import { Context, createContext, PropsWithChildren, useState } from "react";
 import { FormItemNotify } from "../formItem/formItemTypes";
 import { FormProps, FormSchema, InferDataFromSchema } from "./formTypes";
 
-export type DataFormContextMediator<Schema extends FormSchema> = Schema & {
+export type DataFormContextMediator<Schema> = {
   setFormData: React.Dispatch<
-    React.SetStateAction<Partial<InferDataFromSchema<Schema>>>
+    React.SetStateAction<Partial<InferDataFromSchema<Schema & FormSchema>>>
   >;
+  setSchema: React.Dispatch<React.SetStateAction<Schema>>;
   confirm: () => void;
   errors: FormItemNotify<Extract<keyof Schema, string>>[];
-  formData: Partial<InferDataFromSchema<Schema>>;
+  formData: Partial<InferDataFromSchema<Schema & FormSchema>>;
+  schema: Schema;
 };
 
 const DataFormContext = createContext<DataFormContextMediator<any> | null>(
@@ -27,9 +29,10 @@ export const DataFormProvider = <Schema extends FormSchema>(
   const [errors, setErrors] = useState<
     FormItemNotify<Extract<keyof Schema, string>>[]
   >([]);
+  const [schema, setSchema] = useState<Schema>(props.schema);
 
   const validate = (): FormItemNotify[] => {
-    const requiredKeys = Object.entries(props.schema)
+    const requiredKeys = Object.entries(schema)
       .filter(([_, descriptor]) => descriptor.required)
       .map(([fldKey]) => fldKey);
 
@@ -49,7 +52,7 @@ export const DataFormProvider = <Schema extends FormSchema>(
     if (customRes instanceof Array)
       customRes.forEach((error) => errorsToSet.set(error.fld, error));
 
-    Object.entries(props.schema).forEach(([fldKey, item]) => {
+    Object.entries(schema).forEach(([fldKey, item]) => {
       if (
         item.validator &&
         (item.required || (!item.required && formData[fldKey]))
@@ -72,8 +75,10 @@ export const DataFormProvider = <Schema extends FormSchema>(
         ...props,
         formData,
         errors,
-        setFormData: setFormData,
+        setFormData: setFormData as any,
+        setSchema,
         confirm,
+        schema: schema,
       }}
     >
       {props.children}

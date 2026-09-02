@@ -46,6 +46,12 @@ export const PreviewApp = () => {
             component: "checkbox",
             divideAfter: true,
             hint: "Upon request timeout will try again and again indefinitely",
+            onAfterChange: (_, newVal, mediator) => {
+              mediator.setSchema({
+                ...mediator.schema,
+                selfAddr: { ...mediator.schema.selfAddr, required: !!newVal },
+              });
+            },
           },
           selfAddr: {
             title: "Self address",
