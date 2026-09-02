@@ -1,4 +1,29 @@
+import { useContext } from "react";
+import { DataFormContext } from "../form/dataFormContext";
 import { FormItemProps } from "./formItemTypes";
+
+export const PreparedFormItem: React.FC<{ fldKey: string }> = ({ fldKey }) => {
+  const mediator = useContext(DataFormContext)!;
+  const { componentFactory, schema, formData, setFormData, errors } = mediator;
+
+  const descriptor = schema[fldKey];
+  const error = errors.find((err) => err.fld == fldKey);
+
+  return (
+    <FormItem {...descriptor} notify={error}>
+      {componentFactory(descriptor, formData[fldKey], (val: any) => {
+        const oldVal = formData[fldKey];
+        descriptor.onBeforeChange?.(oldVal, val, mediator as any);
+        setFormData((prev) =>
+          Object.is(prev[fldKey], val) ? prev : { ...prev, [fldKey]: val }
+        );
+        descriptor.onAfterChange?.(oldVal, val, mediator as any);
+      })}
+    </FormItem>
+  );
+};
+
+export const PFI = (fldKey: string) => <PreparedFormItem fldKey={fldKey} />;
 
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   children,

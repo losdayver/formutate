@@ -5,12 +5,13 @@ import {
 } from "../../lib/builtin/commonFormValidators";
 import { builtinComponentFactory } from "../../lib/builtin/componentFactory";
 import { DataForm } from "../../lib/form/form";
+import { PFI } from "../../lib/formItem/formItem";
 
 export const PreviewApp = () => {
   return (
     <div
       style={{
-        width: 400,
+        width: 600,
         border: "1px solid white",
         borderRadius: 10,
         padding: 8,
@@ -44,7 +45,6 @@ export const PreviewApp = () => {
           aggressive: {
             title: "Aggressive mode",
             component: "checkbox",
-            divideAfter: true,
             hint: "Upon request timeout will try again and again indefinitely",
             onAfterChange: (_, newVal, mediator) => {
               mediator.setSchema({
@@ -63,7 +63,6 @@ export const PreviewApp = () => {
           selfPort: {
             title: "Self port",
             component: "inputNum",
-            divideAfter: true,
             validator: portFormValidator,
             hint: "If you want to bind your udp socket to a specific port",
           },
@@ -85,7 +84,25 @@ export const PreviewApp = () => {
             title: "Use encryption",
           },
         }}
-      />
+      >
+        <h3>Hello world!</h3>
+        <div style={{ display: "flex" }}>
+          {PFI("selfTag")}
+          {PFI("distantTag")}
+        </div>
+        {PFI("aggressive")}
+        <div style={{ display: "flex" }}>
+          {PFI("selfAddr")}
+          {PFI("selfPort")}
+        </div>
+        <br />
+        <div style={{ display: "flex" }}></div>
+        <div style={{ display: "flex" }}>
+          {PFI("relayAddr")}
+          {PFI("relayPort")}
+        </div>
+        {PFI("encrypt")}
+      </DataForm>
     </div>
   );
 };

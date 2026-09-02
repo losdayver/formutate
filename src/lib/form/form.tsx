@@ -1,5 +1,5 @@
-import { Children, PropsWithChildren, useContext } from "react";
-import { FormItem } from "../formItem/formItem";
+import { PropsWithChildren, useContext } from "react";
+import { PreparedFormItem } from "../formItem/formItem";
 import { FormProps, FormSchema } from "./formTypes";
 import { BuiltinButton } from "../builtin/intrinsic/button";
 import {
@@ -9,7 +9,7 @@ import {
 } from "./dataFormContext";
 
 export const DataForm = <Schema extends FormSchema>(
-  props: FormProps<Schema>
+  props: PropsWithChildren<FormProps<Schema>>
 ) => (
   <DataFormProvider {...props}>
     <DataFormContent {...props} />
@@ -18,8 +18,6 @@ export const DataForm = <Schema extends FormSchema>(
 
 const DataFormContent = <Schema extends FormSchema>({
   children,
-  schema,
-  componentFactory,
   ConfirmButton,
 }: PropsWithChildren<FormProps<Schema>>) => {
   const mediator =
@@ -28,45 +26,15 @@ const DataFormContent = <Schema extends FormSchema>({
     throw new Error("DataFormContent must be rendered inside DataFormProvider");
   }
 
-  const {
-    errors,
-    formData,
-    setFormData,
-    confirm,
-    schema: mediatedSchema,
-  } = mediator;
+  const { confirm, schema: mediatedSchema } = mediator;
 
   return (
     <form className="lsdvr-data-form-form">
-      {children ? (
-        <></>
-      ) : (
-        Object.entries(mediatedSchema).map(([fldKey, descriptor]) => {
-          const error = errors.find((err) => err.fld == fldKey);
-          return (
-            <FormItem
-              title={descriptor.title}
-              required={descriptor.required}
-              key={fldKey}
-              divideAfter={descriptor.divideAfter}
-              notify={error}
-              hint={descriptor.hint}
-              disabled={descriptor.disabled}
-            >
-              {componentFactory(descriptor, formData[fldKey], (val: any) => {
-                const oldVal = formData[fldKey];
-                descriptor.onBeforeChange?.(oldVal, val, mediator as any);
-                setFormData((prev) =>
-                  Object.is(prev[fldKey], val)
-                    ? prev
-                    : { ...prev, [fldKey]: val }
-                );
-                descriptor.onAfterChange?.(oldVal, val, mediator as any);
-              })}
-            </FormItem>
-          );
-        })
-      )}
+      {children
+        ? children
+        : Object.entries(mediatedSchema).map(([fldKey]) => {
+            return <PreparedFormItem key={fldKey} fldKey={fldKey} />;
+          })}
       {ConfirmButton ? (
         <ConfirmButton
           className="lsdvr-data-form-form__submit"

@@ -5,8 +5,18 @@
   gap: 12px 16px;
 }
 
+.lsdvr-data-form-form > :not(.lsdvr-data-form-form__submit) {
+  grid-column: 1 / -1;
+}
+
 .lsdvr-data-form-form__item {
-  display: contents;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1.3fr);
+  align-items: center;
+  gap: 12px 16px;
+  box-sizing: border-box;
 }
 
 .lsdvr-data-form-form__item.error .lsdvr-data-form-form__control,
@@ -194,8 +204,8 @@
   }
 
   .lsdvr-data-form-form__label {
-    justify-self: start;
-    text-align: left;
+    justify-self: end;
+    text-align: right;
   }
 
   .lsdvr-data-form-form__control {

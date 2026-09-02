@@ -16,6 +16,7 @@ export interface FormItemProps {
   notify?: FormItemNotify;
   hint?: string;
   disabled?: boolean;
+  componentFactory?: ComponentFactoryType;
 }
 
 export type ItemDescriptor<Schema extends FormSchema = any> = (

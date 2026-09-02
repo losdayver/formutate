@@ -1,5 +1,8 @@
 import { Context, createContext, PropsWithChildren, useState } from "react";
-import { FormItemNotify } from "../formItem/formItemTypes";
+import {
+  ComponentFactoryType,
+  FormItemNotify,
+} from "../formItem/formItemTypes";
 import { FormProps, FormSchema, InferDataFromSchema } from "./formTypes";
 
 export type DataFormContextMediator<Schema> = {
@@ -11,11 +14,11 @@ export type DataFormContextMediator<Schema> = {
   errors: FormItemNotify<Extract<keyof Schema, string>>[];
   formData: Partial<InferDataFromSchema<Schema & FormSchema>>;
   schema: Schema;
+  componentFactory: ComponentFactoryType;
 };
 
-const DataFormContext = createContext<DataFormContextMediator<any> | null>(
-  null
-);
+export const DataFormContext =
+  createContext<DataFormContextMediator<any> | null>(null);
 
 export const getDataFormContext = <Schema extends FormSchema>() =>
   DataFormContext as unknown as Context<DataFormContextMediator<Schema>>;
@@ -79,6 +82,7 @@ export const DataFormProvider = <Schema extends FormSchema>(
         setSchema,
         confirm,
         schema: schema,
+        componentFactory: props.componentFactory,
       }}
     >
       {props.children}
