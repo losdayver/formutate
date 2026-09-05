@@ -27,5 +27,6 @@ export interface FormProps<Schema extends FormSchema> {
   customValidate?: (
     data: Partial<InferDataFromSchema<Schema>>
   ) => FormItemNotify<Extract<keyof Schema, string>>[];
+  gridRowHeight?: string;
   ConfirmButton?: ComponentType<ComponentPropsWithoutRef<"button">>;
 }

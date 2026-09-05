@@ -6,19 +6,21 @@ import {
 import { builtinComponentFactory } from "../../lib/builtin/componentFactory";
 import { DataForm } from "../../lib/form/form";
 import { GridGroup } from "../../lib/form/formUtils";
-import { EmptyFormItem, PFI } from "../../lib/formItem/formItem";
+import { PFI } from "../../lib/formItem/formItem";
 
 export const PreviewApp = () => {
   return (
     <div
       style={{
-        width: 600,
+        width: 800,
         border: "1px solid white",
         borderRadius: 10,
         padding: 8,
+        backgroundColor: "#040404",
       }}
     >
       <DataForm
+        gridRowHeight={"30px"}
         componentFactory={builtinComponentFactory}
         initialData={{
           selfTag: "oidfun0sdn7u09ascn09anc09asnscdssdds",
@@ -86,16 +88,17 @@ export const PreviewApp = () => {
           },
         }}
       >
-        <GridGroup split header="Distant parameters">
-          {PFI("selfTag")}
-          {PFI("distantTag")}
+        <GridGroup split header="Parameters">
+          <GridGroup split header="Distant parameters">
+            {PFI("selfTag")}
+            {PFI("distantTag")}
+          </GridGroup>
+          {PFI("aggressive")}
+          <GridGroup split header="Self parameters">
+            {PFI("selfAddr")}
+            {PFI("selfPort")}
+          </GridGroup>
         </GridGroup>
-        {PFI("aggressive")}
-        <GridGroup split header="Self parameters">
-          {PFI("selfAddr")}
-          {PFI("selfPort")}
-        </GridGroup>
-        <EmptyFormItem />
         <GridGroup split header="Relay parameters">
           {PFI("relayAddr")}
           {PFI("relayPort")}

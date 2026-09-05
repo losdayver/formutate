@@ -1,4 +1,4 @@
-import { PropsWithChildren, useContext } from "react";
+import { CSSProperties, PropsWithChildren, useContext } from "react";
 import { PreparedFormItem } from "../formItem/formItem";
 import { FormProps, FormSchema } from "./formTypes";
 import { BuiltinButton } from "../builtin/intrinsic/button";
@@ -8,6 +8,13 @@ import {
   DataFormContextMediator,
 } from "./dataFormContext";
 import { buildGrid, GridGroup } from "./formUtils";
+
+const getFormStyle = (gridRowHeight?: string): CSSProperties => ({
+  display: "grid",
+  gridAutoColumns: "minmax(100px, 0.7fr) minmax(0, 1.3fr)",
+  gridAutoRows: `${gridRowHeight ? gridRowHeight : "minmax(30px, 1fr)"}`,
+  gap: 16,
+});
 
 export const DataForm = <Schema extends FormSchema>(
   props: PropsWithChildren<FormProps<Schema>>
@@ -20,6 +27,7 @@ export const DataForm = <Schema extends FormSchema>(
 const DataFormContent = <Schema extends FormSchema>({
   children,
   ConfirmButton,
+  gridRowHeight,
 }: PropsWithChildren<FormProps<Schema>>) => {
   const mediator =
     useContext<DataFormContextMediator<Schema>>(getDataFormContext<Schema>());
@@ -31,7 +39,7 @@ const DataFormContent = <Schema extends FormSchema>({
 
   return (
     <div>
-      <form className="lsdvrform-form">
+      <form className="lsdvrform-form" style={getFormStyle(gridRowHeight)}>
         {children
           ? buildGrid(children)
           : buildGrid(
