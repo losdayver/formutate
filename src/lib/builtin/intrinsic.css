@@ -1,4 +1,4 @@
-.lsdvr-data-form-intrinsic-button {
+.lsdvrform-intrinsic-button {
   min-height: 32px;
   padding: 0 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -16,22 +16,21 @@
     color 150ms ease;
 }
 
-.lsdvr-data-form-intrinsic-button:not(.disabled):not(:disabled):hover,
-.lsdvr-data-form-intrinsic-button:not(.disabled):not(:disabled):focus-visible {
+.lsdvrform-intrinsic-button:not(.disabled):not(:disabled):hover,
+.lsdvrform-intrinsic-button:not(.disabled):not(:disabled):focus-visible {
   border-color: rgba(255, 255, 255, 0.16);
   color: #ffffff;
   background-color: rgba(255, 255, 255, 0.1);
   outline: none;
 }
 
-.lsdvr-data-form-intrinsic-button.disabled,
-.lsdvr-data-form-intrinsic-button:disabled {
+.lsdvrform-intrinsic-button.disabled,
+.lsdvrform-intrinsic-button:disabled {
   opacity: 0.46;
   cursor: not-allowed;
 }
 
-.lsdvr-data-form-intrinsic-input {
-  width: 100%;
+.lsdvrform-intrinsic-input {
   min-height: 32px;
   padding: 0 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -47,52 +46,23 @@
     border-color 150ms ease;
 }
 
-.lsdvr-data-form-intrinsic-input::placeholder {
+.lsdvrform-intrinsic-input::placeholder {
   color: rgba(232, 238, 247, 0.48);
 }
 
-.lsdvr-data-form-intrinsic-input:hover {
+.lsdvrform-intrinsic-input:hover {
   border-color: rgba(255, 255, 255, 0.12);
 }
 
-.lsdvr-data-form-intrinsic-input:focus-visible {
+.lsdvrform-intrinsic-input:focus-visible {
   border-color: rgba(130, 183, 255, 0.72);
   background-color: rgba(255, 255, 255, 0.075);
   outline: none;
 }
 
-.lsdvr-data-form-intrinsic-file-input {
-  width: 100%;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  color: rgba(248, 251, 255, 0.9);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  text-align: left;
-  background-color: rgba(255, 255, 255, 0.055);
-  cursor: pointer;
-}
-
-.lsdvr-data-form-intrinsic-file-input:hover,
-.lsdvr-data-form-intrinsic-file-input:focus-visible {
-  border-color: rgba(255, 255, 255, 0.16);
-  background-color: rgba(255, 255, 255, 0.1);
-  outline: none;
-}
-
-.lsdvr-data-form-intrinsic-file-input:disabled {
-  opacity: 0.46;
-  cursor: not-allowed;
-}
-
-.lsdvr-data-form-intrinsic-checkbox {
+.lsdvrform-intrinsic-checkbox {
   width: 18px;
   height: 18px;
-  margin: 0;
-  flex: 0 0 auto;
   appearance: none;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 5px;
@@ -103,12 +73,12 @@
     border-color 150ms ease;
 }
 
-.lsdvr-data-form-intrinsic-checkbox:hover {
+.lsdvrform-intrinsic-checkbox:hover {
   border-color: rgba(255, 255, 255, 0.28);
   background-color: rgba(255, 255, 255, 0.09);
 }
 
-.lsdvr-data-form-intrinsic-checkbox:checked {
+.lsdvrform-intrinsic-checkbox:checked {
   border-color: rgba(118, 228, 180, 0.8);
   background-color: #76e4b4;
   background-image:
@@ -123,13 +93,13 @@
     9px 9px;
 }
 
-.lsdvr-data-form-intrinsic-checkbox:focus-visible {
+.lsdvrform-intrinsic-checkbox:focus-visible {
   border-color: rgba(130, 183, 255, 0.9);
   outline: 2px solid rgba(130, 183, 255, 0.42);
   outline-offset: 2px;
 }
 
-.lsdvr-data-form-intrinsic-checkbox:disabled {
+.lsdvrform-intrinsic-checkbox:disabled {
   opacity: 0.46;
   cursor: not-allowed;
 }

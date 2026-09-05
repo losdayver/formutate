@@ -5,6 +5,7 @@ import {
 } from "../../lib/builtin/commonFormValidators";
 import { builtinComponentFactory } from "../../lib/builtin/componentFactory";
 import { DataForm } from "../../lib/form/form";
+import { GridGroup } from "../../lib/form/formUtils";
 import { PFI } from "../../lib/formItem/formItem";
 
 export const PreviewApp = () => {
@@ -85,23 +86,16 @@ export const PreviewApp = () => {
           },
         }}
       >
-        <h3>Hello world!</h3>
-        <div style={{ display: "flex" }}>
+        <GridGroup>
           {PFI("selfTag")}
           {PFI("distantTag")}
-        </div>
-        {PFI("aggressive")}
-        <div style={{ display: "flex" }}>
+          {PFI("aggressive")}
           {PFI("selfAddr")}
           {PFI("selfPort")}
-        </div>
-        <br />
-        <div style={{ display: "flex" }}></div>
-        <div style={{ display: "flex" }}>
           {PFI("relayAddr")}
           {PFI("relayPort")}
-        </div>
-        {PFI("encrypt")}
+          {PFI("encrypt")}
+        </GridGroup>
       </DataForm>
     </div>
   );

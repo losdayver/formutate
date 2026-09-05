@@ -8,7 +8,7 @@ export const BuiltinCheckbox: React.FC<CheckboxProps> = ({
 }) => (
   <input
     {...props}
-    className={`lsdvr-data-form-intrinsic-checkbox${className ? ` ${className}` : ""}`}
+    className={`lsdvrform-intrinsic-checkbox${className ? ` ${className}` : ""}`}
     type="checkbox"
   />
 );

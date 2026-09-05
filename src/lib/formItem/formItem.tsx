@@ -1,8 +1,13 @@
-import { useContext } from "react";
+import { ComponentType, PropsWithChildren, useContext } from "react";
 import { DataFormContext } from "../form/dataFormContext";
 import { FormItemProps } from "./formItemTypes";
+import React from "react";
 
-export const PreparedFormItem: React.FC<{ fldKey: string }> = ({ fldKey }) => {
+export const PreparedFormItem: React.FC<
+  { fldKey: string } & {
+    additionalProps?: React.PropsWithChildren<FormItemProps>;
+  }
+> = ({ fldKey, additionalProps }) => {
   const mediator = useContext(DataFormContext)!;
   const { componentFactory, schema, formData, setFormData, errors } = mediator;
 
@@ -10,7 +15,7 @@ export const PreparedFormItem: React.FC<{ fldKey: string }> = ({ fldKey }) => {
   const error = errors.find((err) => err.fld == fldKey);
 
   return (
-    <FormItem {...descriptor} notify={error}>
+    <FormItem {...descriptor} notify={error} {...additionalProps}>
       {componentFactory(descriptor, formData[fldKey], (val: any) => {
         const oldVal = formData[fldKey];
         descriptor.onBeforeChange?.(oldVal, val, mediator as any);
@@ -23,28 +28,36 @@ export const PreparedFormItem: React.FC<{ fldKey: string }> = ({ fldKey }) => {
   );
 };
 
-export const PFI = (fldKey: string) => <PreparedFormItem fldKey={fldKey} />;
+export const PFI = (
+  fldKey: string,
+  additionalProps?: React.PropsWithChildren<FormItemProps>
+) => <PreparedFormItem fldKey={fldKey} additionalProps={additionalProps} />;
 
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   children,
   required,
   title,
-  reactKey,
-  divideAfter,
   notify,
   hint,
-  disabled,
+  gridPositioning,
 }) => {
   return (
-    <div
-      className={`lsdvr-data-form-form__item${notify ? ` ${notify.severity}` : ""}${disabled ? " disabled" : ""}`}
-      key={reactKey}
-    >
-      <span className="lsdvr-data-form-form__label">
+    <>
+      <div
+        className="lsdvrform-form__label"
+        style={
+          gridPositioning
+            ? {
+                gridColumn: `${gridPositioning.label.horizontal.from} / ${gridPositioning.label.horizontal.to}`,
+                gridRow: `${gridPositioning.label.vertical.from} / ${gridPositioning.label.vertical.to}`,
+              }
+            : {}
+        }
+      >
         {title}
         {hint ? (
           <span
-            className="lsdvr-data-form-form__hint"
+            className="lsdvrform-form__hint"
             data-hint={hint}
             aria-label={`Подсказка: ${hint}`}
             tabIndex={0}
@@ -56,25 +69,32 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
         )}
         :
         {required && (
-          <span className="lsdvr-data-form-form__required" aria-hidden="true">
+          <span className="lsdvrform-form__required" aria-hidden="true">
             *
           </span>
         )}
-      </span>
-      <span
-        className={`lsdvr-data-form-form__control${notify?.message ? " lsdvr-data-form-form__control--with-message" : ""}`}
+      </div>
+      <div
+        className={`lsdvrform-form__control${notify?.message ? " lsdvrform-form__control--with-message" : ""}`}
+        style={
+          gridPositioning
+            ? {
+                gridColumn: `${gridPositioning.control.horizontal.from} / ${gridPositioning.control.horizontal.to}`,
+                gridRow: `${gridPositioning.control.vertical.from} / ${gridPositioning.control.vertical.to}`,
+              }
+            : {}
+        }
       >
         {children}
         {notify?.message && (
           <span
-            className="lsdvr-data-form-form__message"
+            className="lsdvrform-form__message"
             role={notify.severity === "error" ? "alert" : "status"}
           >
             {notify.message}
           </span>
         )}
-      </span>
-      {divideAfter && <hr className="lsdvr-data-form-form__divider" />}
-    </div>
+      </div>
+    </>
   );
 };

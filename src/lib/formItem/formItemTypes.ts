@@ -12,11 +12,20 @@ export interface FormItemProps {
   title: string;
   required?: boolean;
   reactKey?: string;
-  divideAfter?: boolean;
   notify?: FormItemNotify;
   hint?: string;
   disabled?: boolean;
   componentFactory?: ComponentFactoryType;
+  gridPositioning?: {
+    label: {
+      vertical: { from: number; to: number };
+      horizontal: { from: number; to: number };
+    };
+    control: {
+      vertical: { from: number; to: number };
+      horizontal: { from: number; to: number };
+    };
+  };
 }
 
 export type ItemDescriptor<Schema extends FormSchema = any> = (
@@ -29,7 +38,6 @@ export type ItemDescriptor<Schema extends FormSchema = any> = (
   title: string;
   validator?: (value: any) => Omit<FormItemNotify, "fld"> | void;
   required?: boolean;
-  divideAfter?: boolean;
   hint?: string;
   disabled?: boolean;
   placeholder?: string;

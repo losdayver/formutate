@@ -10,7 +10,7 @@ export const BuiltinButton: React.FC<ButtonProps> = ({
   <button
     {...props}
     className={[
-      "lsdvr-data-form-intrinsic-button",
+      "lsdvrform-intrinsic-button",
       className,
       props.disabled ? "disabled" : undefined,
     ]
