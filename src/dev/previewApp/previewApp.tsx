@@ -6,7 +6,7 @@ import {
 import { builtinComponentFactory } from "../../lib/builtin/componentFactory";
 import { DataForm } from "../../lib/form/form";
 import { GridGroup } from "../../lib/form/formUtils";
-import { PFI } from "../../lib/formItem/formItem";
+import { EmptyFormItem, PFI } from "../../lib/formItem/formItem";
 
 export const PreviewApp = () => {
   return (
@@ -86,16 +86,17 @@ export const PreviewApp = () => {
           },
         }}
       >
-        <GridGroup split>
+        <GridGroup split header="Distant parameters">
           {PFI("selfTag")}
           {PFI("distantTag")}
         </GridGroup>
         {PFI("aggressive")}
-        <GridGroup split>
+        <GridGroup split header="Self parameters">
           {PFI("selfAddr")}
           {PFI("selfPort")}
         </GridGroup>
-        <GridGroup split>
+        <EmptyFormItem />
+        <GridGroup split header="Relay parameters">
           {PFI("relayAddr")}
           {PFI("relayPort")}
         </GridGroup>

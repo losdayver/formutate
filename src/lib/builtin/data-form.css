@@ -1,11 +1,19 @@
 .lsdvrform-form {
   display: grid;
-  grid-auto-columns: repeat(auto-fit, minmax(1fr));
+  grid-auto-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-auto-rows: minmax(30px, 1fr);
   gap: 8px;
 }
 
 .lsdvrform-form__item {
   display: contents;
+}
+
+.lsdvrform-form__group-header {
+  color: rgba(248, 251, 255, 0.9);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .lsdvrform-form__item.error .lsdvrform-form__control,

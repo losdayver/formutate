@@ -33,6 +33,8 @@ export const PFI = (
   additionalProps?: Partial<FormItemProps>
 ) => <PreparedFormItem fldKey={fldKey} additionalProps={additionalProps} />;
 
+export const EmptyFormItem = () => <></>;
+
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   children,
   required,

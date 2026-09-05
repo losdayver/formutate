@@ -8,10 +8,11 @@ import {
   ReactElement,
   ReactNode,
 } from "react";
-import { PreparedFormItem } from "../formItem/formItem";
+import { PreparedFormItem, EmptyFormItem } from "../formItem/formItem";
 
 type GridGroupProps = PropsWithChildren<{
   split?: boolean;
+  header?: string;
 }>;
 
 export const GridGroup: ComponentType<PropsWithChildren<GridGroupProps>> = ({
@@ -33,21 +34,73 @@ const isGridItem = (element: ReactNode): element is GridItemElement => {
   return isValidElement(element) && element.type === PreparedFormItem;
 };
 
-type GridRow = GridItemElement[];
+type EmptyGridItemElement = ReactElement<
+  ComponentProps<typeof EmptyFormItem>,
+  typeof EmptyFormItem
+>;
+
+const isEmptyGridItem = (
+  element: ReactNode
+): element is EmptyGridItemElement => {
+  return isValidElement(element) && element.type === EmptyFormItem;
+};
+
+type GridRowElement = GridItemElement | EmptyGridItemElement;
+
+interface GridItemsRow {
+  type: "items";
+  elements: GridRowElement[];
+}
+
+interface GridHeaderRow {
+  type: "header";
+  columnSpan: number;
+  content: string;
+}
+
+type GridRow = GridItemsRow | GridHeaderRow;
+
+const getGridRowColumnSpan = (row: GridRow): number =>
+  row.type === "items" ? row.elements.length * 2 : row.columnSpan;
 
 const buildGridRows = (children: ReactNode): GridRow[] => {
   const rows: GridRow[] = [];
 
   Children.forEach(children, (element) => {
     if (isGridGroup(element)) {
+      const nestedRows = buildGridRows(element.props.children);
+      let groupRows = nestedRows;
+
       if (element.props.split) {
-        const splitRow = buildGridRows(element.props.children).flat();
-        if (splitRow.length > 0) rows.push(splitRow);
-      } else {
-        rows.push(...buildGridRows(element.props.children));
+        const nestedHeaders = nestedRows.filter(
+          (row): row is GridHeaderRow => row.type === "header"
+        );
+        const splitElements = nestedRows.flatMap((row) =>
+          row.type === "items" ? row.elements : []
+        );
+
+        groupRows = [...nestedHeaders];
+        if (splitElements.length > 0) {
+          groupRows.push({ type: "items", elements: splitElements });
+        }
       }
-    } else if (isGridItem(element)) {
-      rows.push([element]);
+
+      if (element.props.header !== undefined) {
+        const columnSpan = Math.max(
+          2,
+          ...groupRows.map(getGridRowColumnSpan)
+        );
+
+        rows.push({
+          type: "header",
+          columnSpan,
+          content: element.props.header,
+        });
+      }
+
+      rows.push(...groupRows);
+    } else if (isGridItem(element) || isEmptyGridItem(element)) {
+      rows.push({ type: "items", elements: [element] });
     }
   });
 
@@ -58,9 +111,26 @@ export const buildGrid = (children: ReactNode): ReactNode => {
   return buildGridRows(children).flatMap((row, rowIndex) => {
     const rowStart = rowIndex + 1;
 
-    return row.map((element, itemIndex) => {
+    if (row.type === "header") {
+      return (
+        <div
+          className="lsdvrform-form__group-header"
+          key={`grid-header-${rowIndex}`}
+          style={{
+            gridColumn: `1 / span ${row.columnSpan}`,
+            gridRow: `${rowStart} / ${rowStart + 1}`,
+          }}
+        >
+          {row.content}
+        </div>
+      );
+    }
+
+    return row.elements.map((element, itemIndex) => {
       const labelColumnStart = itemIndex * 2 + 1;
       const controlColumnStart = labelColumnStart + 1;
+
+      if (isEmptyGridItem(element)) return undefined;
 
       return cloneElement(element, {
         ...element.props,
