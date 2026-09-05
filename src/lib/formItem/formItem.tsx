@@ -20,11 +20,15 @@ const messageLayoutStyle: CSSProperties = {
   maxWidth: "100%",
 };
 
-export const PreparedFormItem: React.FC<
-  { fldKey: string } & {
-    additionalProps?: Partial<FormItemProps>;
-  }
-> = ({ fldKey, additionalProps }) => {
+export interface PreparedFormItemProps {
+  fldKey: string;
+  additionalProps?: Partial<FormItemProps>;
+}
+
+export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
+  fldKey,
+  additionalProps,
+}) => {
   const mediator = useContext(DataFormContext)!;
   const { componentFactory, schema, formData, setFormData, errors } = mediator;
 
