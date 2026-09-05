@@ -12,7 +12,7 @@ export const PreviewApp = () => {
   return (
     <div
       style={{
-        width: 800,
+        width: 1500,
         border: "1px solid white",
         borderRadius: 10,
         padding: 8,
@@ -20,7 +20,7 @@ export const PreviewApp = () => {
       }}
     >
       <DataForm
-        gridRowHeight={"30px"}
+        gridRowHeight={"50px"}
         componentFactory={builtinComponentFactory}
         initialData={{
           selfTag: "oidfun0sdn7u09ascn09anc09asnscdssdds",
@@ -93,8 +93,8 @@ export const PreviewApp = () => {
             {PFI("selfTag")}
             {PFI("distantTag")}
           </GridGroup>
-          {PFI("aggressive")}
           <GridGroup split header="Self parameters">
+            {PFI("aggressive")}
             {PFI("selfAddr")}
             {PFI("selfPort")}
           </GridGroup>

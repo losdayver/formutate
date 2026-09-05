@@ -47,113 +47,174 @@ const isEmptyGridItem = (
 
 type GridRowElement = GridItemElement | EmptyGridItemElement;
 
-interface GridItemsRow {
-  type: "items";
-  elements: GridRowElement[];
+interface GridItemCell {
+  type: "item";
+  element: GridRowElement;
+  column: number;
+  row: number;
 }
 
-interface GridHeaderRow {
+interface GridHeaderCell {
   type: "header";
+  column: number;
+  row: number;
   columnSpan: number;
   content: string;
 }
 
-type GridRow = GridItemsRow | GridHeaderRow;
+type GridCell = GridItemCell | GridHeaderCell;
 
-const getGridRowColumnSpan = (row: GridRow): number =>
-  row.type === "items" ? row.elements.length * 2 : row.columnSpan;
+interface GridLayout {
+  width: number;
+  height: number;
+  cells: GridCell[];
+}
 
-const buildGridRows = (children: ReactNode): GridRow[] => {
-  const rows: GridRow[] = [];
+const offsetLayoutCells = (
+  layout: GridLayout,
+  columnOffset: number,
+  rowOffset: number
+): GridCell[] =>
+  layout.cells.map((cell) => ({
+    ...cell,
+    column: cell.column + columnOffset,
+    row: cell.row + rowOffset,
+  }));
+
+const stackLayoutsVertically = (layouts: GridLayout[]): GridLayout => {
+  let rowOffset = 0;
+  const cells: GridCell[] = [];
+
+  for (const layout of layouts) {
+    cells.push(...offsetLayoutCells(layout, 0, rowOffset));
+    rowOffset += layout.height;
+  }
+
+  return {
+    width: Math.max(0, ...layouts.map(({ width }) => width)),
+    height: rowOffset,
+    cells,
+  };
+};
+
+const stackLayoutsHorizontally = (layouts: GridLayout[]): GridLayout => {
+  const height = Math.max(0, ...layouts.map((layout) => layout.height));
+  let columnOffset = 0;
+  const cells: GridCell[] = [];
+
+  for (const layout of layouts) {
+    cells.push(
+      ...offsetLayoutCells(layout, columnOffset, height - layout.height)
+    );
+    columnOffset += layout.width;
+  }
+
+  return {
+    width: columnOffset,
+    height,
+    cells,
+  };
+};
+
+const buildGridGroupLayout = (
+  children: ReactNode,
+  split: boolean,
+  header?: string
+): GridLayout => {
+  const childLayouts: GridLayout[] = [];
 
   Children.forEach(children, (element) => {
     if (isGridGroup(element)) {
-      const nestedRows = buildGridRows(element.props.children);
-      let groupRows = nestedRows;
-
-      if (element.props.split) {
-        const nestedHeaders = nestedRows.filter(
-          (row): row is GridHeaderRow => row.type === "header"
-        );
-        const splitElements = nestedRows.flatMap((row) =>
-          row.type === "items" ? row.elements : []
-        );
-
-        groupRows = [...nestedHeaders];
-        if (splitElements.length > 0) {
-          groupRows.push({ type: "items", elements: splitElements });
-        }
-      }
-
-      if (element.props.header !== undefined) {
-        const columnSpan = Math.max(
-          2,
-          ...groupRows.map(getGridRowColumnSpan)
-        );
-
-        rows.push({
-          type: "header",
-          columnSpan,
-          content: element.props.header,
-        });
-      }
-
-      rows.push(...groupRows);
+      childLayouts.push(
+        buildGridGroupLayout(
+          element.props.children,
+          element.props.split === true,
+          element.props.header
+        )
+      );
     } else if (isGridItem(element) || isEmptyGridItem(element)) {
-      rows.push({ type: "items", elements: [element] });
+      childLayouts.push({
+        width: 2,
+        height: 1,
+        cells: [{ type: "item", element, column: 0, row: 0 }],
+      });
     }
   });
 
-  return rows;
+  const contentLayout = split
+    ? stackLayoutsHorizontally(childLayouts)
+    : stackLayoutsVertically(childLayouts);
+  const width = Math.max(2, contentLayout.width);
+
+  if (header === undefined) {
+    return { ...contentLayout, width };
+  }
+
+  return {
+    width,
+    height: contentLayout.height + 1,
+    cells: [
+      {
+        type: "header",
+        content: header,
+        column: 0,
+        row: 0,
+        columnSpan: width,
+      },
+      ...offsetLayoutCells(contentLayout, 0, 1),
+    ],
+  };
 };
 
 export const buildGrid = (children: ReactNode): ReactNode => {
-  return buildGridRows(children).flatMap((row, rowIndex) => {
-    const rowStart = rowIndex + 1;
+  const layout = buildGridGroupLayout(children, false);
 
-    if (row.type === "header") {
+  return layout.cells.map((cell, cellIndex) => {
+    const rowStart = cell.row + 1;
+
+    if (cell.type === "header") {
       return (
         <div
           className="lsdvrform-form__group-header"
-          key={`grid-header-${rowIndex}`}
+          key={`grid-header-${cellIndex}`}
           style={{
-            gridColumn: `1 / span ${row.columnSpan}`,
+            gridColumn: `${cell.column + 1} / span ${cell.columnSpan}`,
             gridRow: `${rowStart} / ${rowStart + 1}`,
           }}
         >
-          {row.content}
+          {cell.content}
         </div>
       );
     }
 
-    return row.elements.map((element, itemIndex) => {
-      const labelColumnStart = itemIndex * 2 + 1;
-      const controlColumnStart = labelColumnStart + 1;
+    const { element } = cell;
+    if (isEmptyGridItem(element)) return null;
 
-      if (isEmptyGridItem(element)) return undefined;
+    const labelColumnStart = cell.column + 1;
+    const controlColumnStart = labelColumnStart + 1;
 
-      return cloneElement(element, {
-        ...element.props,
-        additionalProps: {
-          ...element.props.additionalProps,
-          gridPositioning: {
-            label: {
-              vertical: { from: rowStart, to: rowStart + 1 },
-              horizontal: {
-                from: labelColumnStart,
-                to: labelColumnStart + 1,
-              },
+    return cloneElement(element, {
+      ...element.props,
+      key: element.key ?? `grid-item-${cellIndex}`,
+      additionalProps: {
+        ...element.props.additionalProps,
+        gridPositioning: {
+          label: {
+            vertical: { from: rowStart, to: rowStart + 1 },
+            horizontal: {
+              from: labelColumnStart,
+              to: labelColumnStart + 1,
             },
-            control: {
-              vertical: { from: rowStart, to: rowStart + 1 },
-              horizontal: {
-                from: controlColumnStart,
-                to: controlColumnStart + 1,
-              },
+          },
+          control: {
+            vertical: { from: rowStart, to: rowStart + 1 },
+            horizontal: {
+              from: controlColumnStart,
+              to: controlColumnStart + 1,
             },
           },
         },
-      });
+      },
     });
   });
 };
