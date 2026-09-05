@@ -12,6 +12,9 @@ export const builtinComponentFactory = (
       return (
         <BuiltinInput
           {...descriptor?.componentProps}
+          disabled={
+            descriptor.disabled ?? descriptor.componentProps?.disabled
+          }
           value={value ?? ""}
           onChange={(event) => onChange(event.target.value)}
         />
@@ -20,6 +23,9 @@ export const builtinComponentFactory = (
       return (
         <BuiltinInput
           {...descriptor?.componentProps}
+          disabled={
+            descriptor.disabled ?? descriptor.componentProps?.disabled
+          }
           type="number"
           value={value ?? ""}
           onChange={(event) => {
@@ -39,6 +45,9 @@ export const builtinComponentFactory = (
         <BuiltinCheckbox
           {...descriptor?.componentProps}
           checked={Boolean(value)}
+          disabled={
+            descriptor.disabled ?? descriptor.componentProps?.disabled
+          }
           onChange={(event) => onChange(event.target.checked)}
         />
       );

@@ -86,16 +86,20 @@ export const PreviewApp = () => {
           },
         }}
       >
-        <GridGroup>
+        <GridGroup split>
           {PFI("selfTag")}
           {PFI("distantTag")}
-          {PFI("aggressive")}
+        </GridGroup>
+        {PFI("aggressive")}
+        <GridGroup split>
           {PFI("selfAddr")}
           {PFI("selfPort")}
+        </GridGroup>
+        <GridGroup split>
           {PFI("relayAddr")}
           {PFI("relayPort")}
-          {PFI("encrypt")}
         </GridGroup>
+        {PFI("encrypt")}
       </DataForm>
     </div>
   );

@@ -1,5 +1,7 @@
 import {
   Children,
+  cloneElement,
+  ComponentProps,
   ComponentType,
   isValidElement,
   PropsWithChildren,
@@ -7,7 +9,6 @@ import {
   ReactNode,
 } from "react";
 import { PreparedFormItem } from "../formItem/formItem";
-import { FormItemProps } from "../formItem/formItemTypes";
 
 type GridGroupProps = PropsWithChildren<{
   split?: boolean;
@@ -23,62 +24,66 @@ const isGridGroup = (
   return isValidElement(element) && element.type === GridGroup;
 };
 
-const isGridItem = (
-  element: ReactNode
-): element is ReactElement<
-  React.PropsWithChildren<FormItemProps>,
+type GridItemElement = ReactElement<
+  ComponentProps<typeof PreparedFormItem>,
   typeof PreparedFormItem
-> => {
+>;
+
+const isGridItem = (element: ReactNode): element is GridItemElement => {
   return isValidElement(element) && element.type === PreparedFormItem;
 };
 
-export const buildGrid = (
-  children: ReactNode,
-  position = { row: 1, column: 1 },
-  split?: boolean
-) => {
-  if (!children) return undefined;
-  return Children.map(children, (element) => {
+type GridRow = GridItemElement[];
+
+const buildGridRows = (children: ReactNode): GridRow[] => {
+  const rows: GridRow[] = [];
+
+  Children.forEach(children, (element) => {
     if (isGridGroup(element)) {
       if (element.props.split) {
-        return buildGrid(
-          element.props.children,
-          {
-            column: position.column,
-            row: position.row + 1,
-          },
-          split
-        );
+        const splitRow = buildGridRows(element.props.children).flat();
+        if (splitRow.length > 0) rows.push(splitRow);
+      } else {
+        rows.push(...buildGridRows(element.props.children));
       }
-      return buildGrid(element.props.children, {
-        column: position.column,
-        row: position.row + 1,
-      });
     } else if (isGridItem(element)) {
-      return {
-        ...element,
-        props: {
-          ...element.props,
-          additionalProps: {
-            gridPositioning: {
-              label: {
-                vertical: { from: position.row, to: position.row + 1 },
-                horizontal: {
-                  from: position.column,
-                  to: position.column + 1,
-                },
+      rows.push([element]);
+    }
+  });
+
+  return rows;
+};
+
+export const buildGrid = (children: ReactNode): ReactNode => {
+  return buildGridRows(children).flatMap((row, rowIndex) => {
+    const rowStart = rowIndex + 1;
+
+    return row.map((element, itemIndex) => {
+      const labelColumnStart = itemIndex * 2 + 1;
+      const controlColumnStart = labelColumnStart + 1;
+
+      return cloneElement(element, {
+        ...element.props,
+        additionalProps: {
+          ...element.props.additionalProps,
+          gridPositioning: {
+            label: {
+              vertical: { from: rowStart, to: rowStart + 1 },
+              horizontal: {
+                from: labelColumnStart,
+                to: labelColumnStart + 1,
               },
-              control: {
-                vertical: { from: position.row + 1, to: position.row + 2 },
-                horizontal: {
-                  from: position.column,
-                  to: position.column + 1,
-                },
+            },
+            control: {
+              vertical: { from: rowStart, to: rowStart + 1 },
+              horizontal: {
+                from: controlColumnStart,
+                to: controlColumnStart + 1,
               },
             },
           },
         },
-      };
-    }
+      });
+    });
   });
 };

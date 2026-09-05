@@ -7,7 +7,7 @@ import {
   DataFormProvider,
   DataFormContextMediator,
 } from "./dataFormContext";
-import { buildGrid } from "./formUtils";
+import { buildGrid, GridGroup } from "./formUtils";
 
 export const DataForm = <Schema extends FormSchema>(
   props: PropsWithChildren<FormProps<Schema>>
@@ -27,17 +27,21 @@ const DataFormContent = <Schema extends FormSchema>({
     throw new Error("DataFormContent must be rendered inside DataFormProvider");
   }
 
-  buildGrid(children);
-
   const { confirm, schema: mediatedSchema } = mediator;
 
   return (
-    <form className="lsdvrform-form">
-      {children
-        ? buildGrid(children)
-        : Object.entries(mediatedSchema).map(([fldKey]) => {
-            return <PreparedFormItem key={fldKey} fldKey={fldKey} />;
-          })}
+    <div>
+      <form className="lsdvrform-form">
+        {children
+          ? buildGrid(children)
+          : buildGrid(
+              <GridGroup>
+                {Object.entries(mediatedSchema).map(([fldKey]) => {
+                  return <PreparedFormItem key={fldKey} fldKey={fldKey} />;
+                })}
+              </GridGroup>
+            )}
+      </form>
       {ConfirmButton ? (
         <ConfirmButton className="lsdvrform-form__submit" onClick={confirm}>
           Confirm
@@ -47,6 +51,6 @@ const DataFormContent = <Schema extends FormSchema>({
           Confirm
         </BuiltinButton>
       )}
-    </form>
+    </div>
   );
 };

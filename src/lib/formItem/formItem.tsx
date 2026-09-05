@@ -5,7 +5,7 @@ import React from "react";
 
 export const PreparedFormItem: React.FC<
   { fldKey: string } & {
-    additionalProps?: React.PropsWithChildren<FormItemProps>;
+    additionalProps?: Partial<FormItemProps>;
   }
 > = ({ fldKey, additionalProps }) => {
   const mediator = useContext(DataFormContext)!;
@@ -30,7 +30,7 @@ export const PreparedFormItem: React.FC<
 
 export const PFI = (
   fldKey: string,
-  additionalProps?: React.PropsWithChildren<FormItemProps>
+  additionalProps?: Partial<FormItemProps>
 ) => <PreparedFormItem fldKey={fldKey} additionalProps={additionalProps} />;
 
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
@@ -39,10 +39,19 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   title,
   notify,
   hint,
+  disabled,
   gridPositioning,
 }) => {
   return (
-    <>
+    <div
+      className={[
+        "lsdvrform-form__item",
+        notify?.severity,
+        disabled ? "disabled" : undefined,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <div
         className="lsdvrform-form__label"
         style={
@@ -55,24 +64,24 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
         }
       >
         {title}
-        {hint ? (
-          <span
-            className="lsdvrform-form__hint"
-            data-hint={hint}
-            aria-label={`Подсказка: ${hint}`}
-            tabIndex={0}
-          >
-            ❔
-          </span>
-        ) : (
-          ""
-        )}
-        :
         {required && (
           <span className="lsdvrform-form__required" aria-hidden="true">
             *
           </span>
         )}
+        {hint ? (
+          <span
+            className="lsdvrform-form__hint"
+            data-hint={hint}
+            aria-label={`Hint: ${hint}`}
+            tabIndex={0}
+          >
+            {"\u2754"}
+          </span>
+        ) : (
+          ""
+        )}
+        :
       </div>
       <div
         className={`lsdvrform-form__control${notify?.message ? " lsdvrform-form__control--with-message" : ""}`}
@@ -95,6 +104,6 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
           </span>
         )}
       </div>
-    </>
+    </div>
   );
 };

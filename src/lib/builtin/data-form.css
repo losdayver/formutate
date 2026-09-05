@@ -1,7 +1,11 @@
 .lsdvrform-form {
   display: grid;
-  grid-template-columns: repeat(10 100px);
-  grid-template-rows: repeat(10 100px);
+  grid-auto-columns: repeat(auto-fit, minmax(1fr));
+  gap: 8px;
+}
+
+.lsdvrform-form__item {
+  display: contents;
 }
 
 .lsdvrform-form__item.error .lsdvrform-form__control,
@@ -59,6 +63,7 @@
   font-weight: 700;
   line-height: 1.25;
   text-align: right;
+  align-self: center;
 }
 
 .lsdvrform-form__required {
@@ -68,12 +73,18 @@
 }
 
 .lsdvrform-form__hint {
+  position: relative;
+  display: inline-flex;
+  margin-left: 4px;
   cursor: help;
   outline: none;
 }
 
 .lsdvrform-form__hint::before,
 .lsdvrform-form__hint::after {
+  position: absolute;
+  left: 50%;
+  z-index: 10;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
@@ -84,12 +95,15 @@
 
 .lsdvrform-form__hint::before {
   content: "";
+  top: calc(100% + 3px);
   border: 5px solid transparent;
   border-bottom-color: #273244;
+  transform: translateX(-50%);
 }
 
 .lsdvrform-form__hint::after {
   content: attr(data-hint);
+  top: calc(100% + 13px);
   width: max-content;
   max-width: min(240px, 70vw);
   padding: 7px 9px;
@@ -102,6 +116,7 @@
   line-height: 1.35;
   text-align: left;
   white-space: normal;
+  transform: translateX(-50%);
 }
 
 .lsdvrform-form__hint:hover::before,
@@ -112,7 +127,17 @@
   opacity: 1;
 }
 
+.lsdvrform-form__control {
+  position: relative;
+  min-width: 0;
+}
+
 .lsdvrform-form__message {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 0;
+  z-index: 1;
+  max-width: 100%;
   overflow: hidden;
   font-size: 11px;
   font-weight: 700;
