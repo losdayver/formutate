@@ -84,10 +84,18 @@ const buildChild = (child: ReactNode, cursor: Cursor): BuiltChild => {
   }
 
   if (isGridGroup(child)) {
+    const group = child;
+
+    const contentStart = {
+      row: cursor.row + (group.props.header ? 1 : 0),
+      col: cursor.col,
+    };
+
     let childCursor = { ...cursor };
     // Always the right lowest point
     let bounds = { ...cursor };
-    const group = child;
+
+    if (group.props.header) childCursor.row += 1;
 
     const contentRow: ReactNode[] = [];
 
@@ -100,11 +108,24 @@ const buildChild = (child: ReactNode, cursor: Cursor): BuiltChild => {
       };
 
       childCursor = group.props.split
-        ? { row: cursor.row, col: nextCursor.col }
-        : { row: nextCursor.row, col: cursor.col };
+        ? { row: contentStart.row, col: nextCursor.col }
+        : { row: nextCursor.row, col: contentStart.col };
 
       contentRow.push(content);
     });
+
+    if (group.props.header)
+      contentRow.unshift(
+        <div
+          className="lsdvrform-form__group-header"
+          style={{
+            gridColumn: `${cursor.col} / ${bounds.col}`,
+            gridRow: `${cursor.row} / ${cursor.row}`,
+          }}
+        >
+          {group.props.header}
+        </div>
+      );
 
     return {
       content: contentRow,
