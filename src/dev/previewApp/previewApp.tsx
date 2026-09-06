@@ -215,15 +215,6 @@ const deploymentSchema: Record<DeploymentField, ItemDescriptor> = {
     title: "Mutual TLS",
     component: "checkbox",
     hint: "Require authenticated and encrypted controller connections",
-    onBeforeChange: (wasEnabled, enabled, mediator) => {
-      if (wasEnabled && !enabled) {
-        mediator.setFormData((data) => ({
-          ...data,
-          certificateFingerprint: undefined,
-          certificateBundle: undefined,
-        }));
-      }
-    },
     onAfterChange: (_, enabled, mediator) => {
       mediator.setSchema((schema) => ({
         ...schema,
@@ -255,43 +246,6 @@ const deploymentSchema: Record<DeploymentField, ItemDescriptor> = {
   },
 };
 
-const previewComponentFactory: ComponentFactoryType = (
-  descriptor,
-  value,
-  onChange
-) => {
-  if (descriptor.component === "file") {
-    return (
-      <BuiltinInput
-        {...descriptor.componentProps}
-        type="file"
-        disabled={descriptor.disabled ?? descriptor.componentProps?.disabled}
-        onChange={(event) =>
-          onChange(event.currentTarget.files?.item(0)?.name ?? "")
-        }
-      />
-    );
-  }
-
-  if (descriptor.component === "button") {
-    return (
-      <BuiltinButton
-        {...descriptor.componentProps}
-        disabled={descriptor.disabled ?? descriptor.componentProps?.disabled}
-      />
-    );
-  }
-
-  return builtinComponentFactory(descriptor, value, onChange);
-};
-
-const DeployButton = ({
-  children: _children,
-  ...props
-}: ComponentPropsWithoutRef<"button">) => (
-  <BuiltinButton {...props}>Validate and deploy</BuiltinButton>
-);
-
 export const PreviewApp = () => {
   return (
     <div
@@ -307,9 +261,9 @@ export const PreviewApp = () => {
       }}
     >
       <DataForm
-        gridRowHeight="42px"
-        componentFactory={previewComponentFactory}
-        ConfirmButton={DeployButton}
+        gridStyle={{ gridRow: "42px" }}
+        componentFactory={builtinComponentFactory}
+        confirmButtonProps={{ children: "Confirm and continue" }}
         schema={deploymentSchema}
         initialData={{
           deploymentId: "orbital-control-prod-01",

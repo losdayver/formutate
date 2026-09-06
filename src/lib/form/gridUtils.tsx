@@ -149,6 +149,7 @@ const buildChild = (
             gridColumn: `${cursor.col} / ${bounds.col}`,
             gridRow: `${cursor.row} / ${cursor.row + 1}`,
           }}
+          key={`lsdvrform-form__group-header${cursor.col}/${bounds.col}:${cursor.row}/${cursor.row + 1}`}
         >
           {group.props.header}
         </div>

@@ -1,4 +1,9 @@
-import { ComponentPropsWithoutRef, ComponentType } from "react";
+import {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentType,
+  CSSProperties,
+} from "react";
 import {
   ComponentFactoryType,
   DescriptorsValueTypes,
@@ -23,10 +28,13 @@ export interface FormProps<Schema extends FormSchema> {
   schema: Schema;
   componentFactory: ComponentFactoryType;
   initialData?: Partial<InferDataFromSchema<Schema>>;
+  gridStyle?: CSSProperties;
+  confirmButtonProps?: ComponentProps<
+    ComponentType<ComponentPropsWithoutRef<"button">>
+  >;
+  // Lifecycle methods
   onConfirm?: (data: InferDataFromSchema<Schema>) => void;
   customValidate?: (
     data: Partial<InferDataFromSchema<Schema>>
   ) => FormItemNotify<Extract<keyof Schema, string>>[];
-  gridRowHeight?: string;
-  ConfirmButton?: ComponentType<ComponentPropsWithoutRef<"button">>;
 }
