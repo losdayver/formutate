@@ -86,8 +86,6 @@ export const GFI = (
   </GridItem>
 );
 
-export const EmptyFormItem = () => <></>;
-
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   children,
   required,
