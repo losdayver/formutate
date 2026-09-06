@@ -8,12 +8,34 @@ import {
   ReactElement,
   ReactNode,
 } from "react";
-import { PreparedFormItem, EmptyFormItem } from "../formItem/formItem";
+
+export interface GridPositioning {
+  label: { row: [number, number]; col: [number, number] };
+  control: { row: [number, number]; col: [number, number] };
+}
 
 type GridGroupProps = PropsWithChildren<{
   split?: boolean;
   header?: string;
 }>;
+
+type GridItemProps = PropsWithChildren<{
+  gridPositioning?: GridPositioning;
+  labelColSpan?: number;
+  labelRowSpan?: number;
+  controlColSpan?: number;
+  controlRowSpan?: number;
+}>;
+
+export const GridItem: ComponentType<PropsWithChildren<GridItemProps>> = ({
+  children,
+  gridPositioning,
+}) =>
+  Children.map(children, (child) =>
+    isValidElement(child)
+      ? cloneElement(child, { ...(child?.props ?? {}), gridPositioning } as any)
+      : child
+  );
 
 export const GridGroup: ComponentType<PropsWithChildren<GridGroupProps>> = ({
   children,
@@ -25,196 +47,138 @@ const isGridGroup = (
   return isValidElement(element) && element.type === GridGroup;
 };
 
-type GridItemElement = ReactElement<
-  ComponentProps<typeof PreparedFormItem>,
-  typeof PreparedFormItem
->;
-
-const isGridItem = (element: ReactNode): element is GridItemElement => {
-  return isValidElement(element) && element.type === PreparedFormItem;
-};
-
-type EmptyGridItemElement = ReactElement<
-  ComponentProps<typeof EmptyFormItem>,
-  typeof EmptyFormItem
->;
-
-const isEmptyGridItem = (
+const isGridItem = (
   element: ReactNode
-): element is EmptyGridItemElement => {
-  return isValidElement(element) && element.type === EmptyFormItem;
+): element is ReactElement<GridItemProps, typeof GridItem> => {
+  return isValidElement(element) && element.type === GridItem;
 };
 
-type GridRowElement = GridItemElement | EmptyGridItemElement;
-
-interface GridItemCell {
-  type: "item";
-  element: GridRowElement;
-  column: number;
+interface Cursor {
   row: number;
+  col: number;
 }
 
-interface GridHeaderCell {
-  type: "header";
-  column: number;
-  row: number;
-  columnSpan: number;
-  content: string;
+interface BuiltChild {
+  content: ReactNode;
+  /** Первая свободная позиция справа и снизу от построенного узла. */
+  nextCursor: Cursor;
 }
 
-type GridCell = GridItemCell | GridHeaderCell;
+const buildChild = (
+  child: ReactNode,
+  cursor: Cursor,
+  groupDepth = 1,
+  rightEdge?: number
+): BuiltChild => {
+  if (isGridItem(child)) {
+    const gridItem = child;
+    const labelColEnd = cursor.col + (gridItem.props.labelColSpan ?? 1);
+    const labelRowEnd = cursor.row + (gridItem.props.labelRowSpan ?? 1);
+    const controlRowEnd = cursor.row + (gridItem.props.controlRowSpan ?? 1);
+    const controlColEnd =
+      gridItem.props.controlColSpan === undefined
+        ? (rightEdge ?? labelColEnd + 1)
+        : labelColEnd + gridItem.props.controlColSpan;
 
-interface GridLayout {
-  width: number;
-  height: number;
-  cells: GridCell[];
-}
-
-const offsetLayoutCells = (
-  layout: GridLayout,
-  columnOffset: number,
-  rowOffset: number
-): GridCell[] =>
-  layout.cells.map((cell) => ({
-    ...cell,
-    column: cell.column + columnOffset,
-    row: cell.row + rowOffset,
-  }));
-
-const stackLayoutsVertically = (layouts: GridLayout[]): GridLayout => {
-  let rowOffset = 0;
-  const cells: GridCell[] = [];
-
-  for (const layout of layouts) {
-    cells.push(...offsetLayoutCells(layout, 0, rowOffset));
-    rowOffset += layout.height;
-  }
-
-  return {
-    width: Math.max(0, ...layouts.map(({ width }) => width)),
-    height: rowOffset,
-    cells,
-  };
-};
-
-const stackLayoutsHorizontally = (layouts: GridLayout[]): GridLayout => {
-  const height = Math.max(0, ...layouts.map((layout) => layout.height));
-  let columnOffset = 0;
-  const cells: GridCell[] = [];
-
-  for (const layout of layouts) {
-    cells.push(
-      ...offsetLayoutCells(layout, columnOffset, height - layout.height)
-    );
-    columnOffset += layout.width;
-  }
-
-  return {
-    width: columnOffset,
-    height,
-    cells,
-  };
-};
-
-const buildGridGroupLayout = (
-  children: ReactNode,
-  split: boolean,
-  header?: string
-): GridLayout => {
-  const childLayouts: GridLayout[] = [];
-
-  Children.forEach(children, (element) => {
-    if (isGridGroup(element)) {
-      childLayouts.push(
-        buildGridGroupLayout(
-          element.props.children,
-          element.props.split === true,
-          element.props.header
-        )
-      );
-    } else if (isGridItem(element) || isEmptyGridItem(element)) {
-      childLayouts.push({
-        width: 2,
-        height: 1,
-        cells: [{ type: "item", element, column: 0, row: 0 }],
-      });
-    }
-  });
-
-  const contentLayout = split
-    ? stackLayoutsHorizontally(childLayouts)
-    : stackLayoutsVertically(childLayouts);
-  const width = Math.max(2, contentLayout.width);
-
-  if (header === undefined) {
-    return { ...contentLayout, width };
-  }
-
-  return {
-    width,
-    height: contentLayout.height + 1,
-    cells: [
-      {
-        type: "header",
-        content: header,
-        column: 0,
-        row: 0,
-        columnSpan: width,
+    return {
+      content: cloneElement(gridItem, {
+        ...gridItem.props,
+        gridPositioning: {
+          label: {
+            row: [cursor.row, labelRowEnd],
+            col: [cursor.col, labelColEnd],
+          },
+          control: {
+            row: [cursor.row, controlRowEnd],
+            col: [labelColEnd, controlColEnd],
+          },
+        },
+      }),
+      nextCursor: {
+        row: Math.max(labelRowEnd, controlRowEnd),
+        col: controlColEnd,
       },
-      ...offsetLayoutCells(contentLayout, 0, 1),
-    ],
-  };
+    };
+  }
+
+  if (isGridGroup(child)) {
+    const group = child;
+
+    const contentStart = {
+      row: cursor.row + (group.props.header ? 1 : 0),
+      col: cursor.col,
+    };
+
+    let childCursor = { ...cursor };
+
+    // Always the rightmost lowest point
+    let bounds = { ...cursor };
+
+    if (group.props.header) childCursor.row += 1;
+
+    const contentRow: ReactNode[] = [];
+
+    const groupChildren = Children.toArray(group.props.children);
+
+    groupChildren.forEach((child, index) => {
+      const { content, nextCursor } = buildChild(
+        child,
+        childCursor,
+        groupDepth + 1,
+        group.props.split && index < groupChildren.length - 1
+          ? undefined
+          : rightEdge
+      );
+
+      bounds = {
+        row: Math.max(bounds.row, nextCursor.row),
+        col: Math.max(bounds.col, nextCursor.col),
+      };
+
+      childCursor = group.props.split
+        ? { row: contentStart.row, col: nextCursor.col }
+        : { row: nextCursor.row, col: contentStart.col };
+
+      contentRow.push(content);
+    });
+
+    if (group.props.header)
+      contentRow.unshift(
+        <div
+          className={`lsdvrform-form__group-header lsdvrform-form__group-header__${groupDepth}`}
+          style={{
+            alignSelf: "center",
+            gridColumn: `${cursor.col} / ${bounds.col}`,
+            gridRow: `${cursor.row} / ${cursor.row + 1}`,
+          }}
+        >
+          {group.props.header}
+        </div>
+      );
+
+    return {
+      content: contentRow,
+      nextCursor: bounds,
+    };
+  }
+
+  return { content: null, nextCursor: cursor };
 };
 
 export const buildGrid = (children: ReactNode): ReactNode => {
-  const layout = buildGridGroupLayout(children, false);
+  const rightEdge = Math.max(
+    1,
+    ...Children.toArray(children).map(
+      (child) => buildChild(child, { col: 1, row: 1 }).nextCursor.col
+    )
+  );
+  let cursor = { col: 1, row: 1 };
 
-  return layout.cells.map((cell, cellIndex) => {
-    const rowStart = cell.row + 1;
+  return Children.map(children, (child) => {
+    const result = buildChild(child, cursor, 1, rightEdge);
 
-    if (cell.type === "header") {
-      return (
-        <div
-          className="lsdvrform-form__group-header"
-          key={`grid-header-${cellIndex}`}
-          style={{
-            gridColumn: `${cell.column + 1} / span ${cell.columnSpan}`,
-            gridRow: `${rowStart} / ${rowStart + 1}`,
-          }}
-        >
-          {cell.content}
-        </div>
-      );
-    }
+    cursor = { col: cursor.col, row: result.nextCursor.row };
 
-    const { element } = cell;
-    if (isEmptyGridItem(element)) return null;
-
-    const labelColumnStart = cell.column + 1;
-    const controlColumnStart = labelColumnStart + 1;
-
-    return cloneElement(element, {
-      ...element.props,
-      key: element.key ?? `grid-item-${cellIndex}`,
-      additionalProps: {
-        ...element.props.additionalProps,
-        gridPositioning: {
-          label: {
-            vertical: { from: rowStart, to: rowStart + 1 },
-            horizontal: {
-              from: labelColumnStart,
-              to: labelColumnStart + 1,
-            },
-          },
-          control: {
-            vertical: { from: rowStart, to: rowStart + 1 },
-            horizontal: {
-              from: controlColumnStart,
-              to: controlColumnStart + 1,
-            },
-          },
-        },
-      },
-    });
+    return result.content;
   });
 };

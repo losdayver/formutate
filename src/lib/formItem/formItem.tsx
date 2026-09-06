@@ -2,13 +2,30 @@ import { CSSProperties, useContext } from "react";
 import { DataFormContext } from "../form/dataFormContext";
 import { FormItemProps } from "./formItemTypes";
 import React from "react";
+import { GridItem, GridPositioning } from "../form/formUtils";
 
 const formItemGridStyle: CSSProperties = {
   display: "contents",
 };
 
+const labelLayoutStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  alignSelf: "center",
+  justifyContent: "flex-end",
+  minWidth: 0,
+};
+
+const labelTextLayoutStyle: CSSProperties = {
+  minWidth: 0,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
 const controlLayoutStyle: CSSProperties = {
   position: "relative",
+  alignSelf: "center",
   minWidth: 0,
 };
 
@@ -20,11 +37,17 @@ const messageLayoutStyle: CSSProperties = {
   maxWidth: "100%",
 };
 
-export const PreparedFormItem: React.FC<
-  { fldKey: string } & {
-    additionalProps?: Partial<FormItemProps>;
-  }
-> = ({ fldKey, additionalProps }) => {
+export interface PreparedFormItemProps {
+  fldKey: string;
+  formItemProps?: Partial<FormItemProps>;
+  gridPositioning?: GridPositioning;
+}
+
+export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
+  fldKey,
+  formItemProps,
+  gridPositioning,
+}) => {
   const mediator = useContext(DataFormContext)!;
   const { componentFactory, schema, formData, setFormData, errors } = mediator;
 
@@ -32,7 +55,12 @@ export const PreparedFormItem: React.FC<
   const error = errors.find((err) => err.fld == fldKey);
 
   return (
-    <FormItem {...descriptor} notify={error} {...additionalProps}>
+    <FormItem
+      {...descriptor}
+      notify={error}
+      {...formItemProps}
+      gridPositioning={gridPositioning}
+    >
       {componentFactory(descriptor, formData[fldKey], (val: any) => {
         const oldVal = formData[fldKey];
         descriptor.onBeforeChange?.(oldVal, val, mediator as any);
@@ -45,12 +73,18 @@ export const PreparedFormItem: React.FC<
   );
 };
 
-export const PFI = (
+export const GFI = (
   fldKey: string,
-  additionalProps?: Partial<FormItemProps>
-) => <PreparedFormItem fldKey={fldKey} additionalProps={additionalProps} />;
-
-export const EmptyFormItem = () => <></>;
+  gridItemProps?: Omit<
+    React.ComponentProps<typeof GridItem>,
+    "children" | "gridPositioning"
+  >,
+  fromItemProps?: Partial<FormItemProps>
+) => (
+  <GridItem {...gridItemProps}>
+    <PreparedFormItem fldKey={fldKey} formItemProps={fromItemProps} />
+  </GridItem>
+);
 
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   children,
@@ -75,34 +109,38 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
       <div
         className="lsdvrform-form__label"
         style={{
-          alignSelf: "center",
+          ...labelLayoutStyle,
           ...(gridPositioning
             ? {
-                gridColumn: `${gridPositioning.label.horizontal.from} / ${gridPositioning.label.horizontal.to}`,
-                gridRow: `${gridPositioning.label.vertical.from} / ${gridPositioning.label.vertical.to}`,
+                gridColumn: `${gridPositioning.label.col[0]} / ${gridPositioning.label.col[1]}`,
+                gridRow: `${gridPositioning.label.row[0]} / ${gridPositioning.label.row[1]}`,
               }
             : {}),
         }}
       >
-        {title}
-        {required && (
-          <span className="lsdvrform-form__required" aria-hidden="true">
-            *
-          </span>
-        )}
-        {hint ? (
-          <span
-            className="lsdvrform-form__hint"
-            data-hint={hint}
-            aria-label={`Hint: ${hint}`}
-            tabIndex={0}
-          >
-            {"\u2754"}
-          </span>
-        ) : (
-          ""
-        )}
-        :
+        <span style={labelTextLayoutStyle} title={title}>
+          {title}
+        </span>
+        <span style={{ flexShrink: 0 }}>
+          {required && (
+            <span className="lsdvrform-form__required" aria-hidden="true">
+              *
+            </span>
+          )}
+          {hint ? (
+            <span
+              className="lsdvrform-form__hint"
+              data-hint={hint}
+              aria-label={`Hint: ${hint}`}
+              tabIndex={0}
+            >
+              {"\u2754"}
+            </span>
+          ) : (
+            ""
+          )}
+          <span aria-hidden="true">:</span>
+        </span>
       </div>
       <div
         className={`lsdvrform-form__control${notify?.message ? " lsdvrform-form__control--with-message" : ""}`}
@@ -110,8 +148,8 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
           ...controlLayoutStyle,
           ...(gridPositioning
             ? {
-                gridColumn: `${gridPositioning.control.horizontal.from} / ${gridPositioning.control.horizontal.to}`,
-                gridRow: `${gridPositioning.control.vertical.from} / ${gridPositioning.control.vertical.to}`,
+                gridColumn: `${gridPositioning.control.col[0]} / ${gridPositioning.control.col[1]}`,
+                gridRow: `${gridPositioning.control.row[0]} / ${gridPositioning.control.row[1]}`,
               }
             : {}),
         }}
