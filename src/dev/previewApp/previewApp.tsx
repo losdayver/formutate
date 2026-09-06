@@ -389,7 +389,7 @@ export const PreviewApp = () => {
   return (
     <div
       style={{
-        width: "min(1100px, calc(100vw - 32px))",
+        width: "min(1500px, calc(100vw - 32px))",
         margin: "16px auto",
         padding: 16,
         border: "1px solid rgba(255, 255, 255, 0.18)",
@@ -490,7 +490,7 @@ export const PreviewApp = () => {
             {GFI("region")}
           </GridGroup>
           <GridGroup split header="Control plane">
-            {GFI("controlAddress")}
+            {GFI("controlAddress", 2)}
             {GFI("controlPort")}
             {GFI("publicAccess")}
           </GridGroup>

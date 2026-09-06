@@ -65,7 +65,8 @@ interface BuiltChild {
 const buildChild = (
   child: ReactNode,
   cursor: Cursor,
-  groupDepth = 1
+  groupDepth = 1,
+  rightEdge?: number
 ): BuiltChild => {
   if (isGridItem(child)) {
     const gridItem = child;
@@ -82,14 +83,14 @@ const buildChild = (
             row: [cursor.row, cursor.row + 1 + (gridItem.props.rowSpan ?? 0)],
             col: [
               cursor.col + 1,
-              cursor.col + 2 + (gridItem.props.colSpan ?? 0),
+              rightEdge ?? cursor.col + 2 + (gridItem.props.colSpan ?? 0),
             ],
           },
         },
       }),
       nextCursor: {
         row: cursor.row + 1 + (gridItem.props.rowSpan ?? 0),
-        col: cursor.col + 2 + (gridItem.props.colSpan ?? 0),
+        col: rightEdge ?? cursor.col + 2 + (gridItem.props.colSpan ?? 0),
       },
     };
   }
@@ -110,11 +111,14 @@ const buildChild = (
 
     const contentRow: ReactNode[] = [];
 
-    Children.map(group.props.children, (child) => {
+    const groupChildren = Children.toArray(group.props.children);
+
+    groupChildren.forEach((child, index) => {
       const { content, nextCursor } = buildChild(
         child,
         childCursor,
-        groupDepth + 1
+        groupDepth + 1,
+        group.props.split && index < groupChildren.length - 1 ? undefined : rightEdge
       );
 
       bounds = {
@@ -153,10 +157,16 @@ const buildChild = (
 };
 
 export const buildGrid = (children: ReactNode): ReactNode => {
+  const rightEdge = Math.max(
+    1,
+    ...Children.toArray(children).map(
+      (child) => buildChild(child, { col: 1, row: 1 }).nextCursor.col
+    )
+  );
   let cursor = { col: 1, row: 1 };
 
   return Children.map(children, (child) => {
-    const result = buildChild(child, cursor);
+    const result = buildChild(child, cursor, 1, rightEdge);
 
     cursor = { col: cursor.col, row: result.nextCursor.row };
 
