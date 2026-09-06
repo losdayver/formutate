@@ -21,6 +21,8 @@ type GridGroupProps = PropsWithChildren<{
 
 type GridItemProps = PropsWithChildren<{
   gridPositioning?: GridPositioning;
+  colSpan?: number;
+  rowSpan?: number;
 }>;
 
 export const GridItem: ComponentType<PropsWithChildren<GridItemProps>> = ({
@@ -62,23 +64,28 @@ interface BuiltChild {
 
 const buildChild = (child: ReactNode, cursor: Cursor): BuiltChild => {
   if (isGridItem(child)) {
+    const gridItem = child;
+
     return {
-      content: cloneElement(child, {
-        ...child.props,
+      content: cloneElement(gridItem, {
+        ...gridItem.props,
         gridPositioning: {
           label: {
-            row: [cursor.row, cursor.row + 1],
+            row: [cursor.row, cursor.row + 1 + (gridItem.props.rowSpan ?? 0)],
             col: [cursor.col, cursor.col + 1],
           },
           control: {
-            row: [cursor.row, cursor.row + 1],
-            col: [cursor.col + 1, cursor.col + 2],
+            row: [cursor.row, cursor.row + 1 + (gridItem.props.rowSpan ?? 0)],
+            col: [
+              cursor.col + 1,
+              cursor.col + 2 + (gridItem.props.colSpan ?? 0),
+            ],
           },
         },
       }),
       nextCursor: {
-        row: cursor.row + 1,
-        col: cursor.col + 2,
+        row: cursor.row + 1 + (gridItem.props.rowSpan ?? 0),
+        col: cursor.col + 2 + (gridItem.props.colSpan ?? 0),
       },
     };
   }
@@ -119,6 +126,7 @@ const buildChild = (child: ReactNode, cursor: Cursor): BuiltChild => {
         <div
           className="lsdvrform-form__group-header"
           style={{
+            alignSelf: "center",
             gridColumn: `${cursor.col} / ${bounds.col}`,
             gridRow: `${cursor.row} / ${cursor.row}`,
           }}

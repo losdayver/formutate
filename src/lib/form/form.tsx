@@ -13,7 +13,7 @@ const getFormStyle = (gridRowHeight?: string): CSSProperties => ({
   display: "grid",
   gridAutoColumns: "minmax(100px, 0.7fr) minmax(0, 1.3fr)",
   gridAutoRows: `${gridRowHeight ? gridRowHeight : "minmax(30px, 1fr)"}`,
-  gap: 16,
+  gap: 20,
 });
 
 export const DataForm = <Schema extends FormSchema>(

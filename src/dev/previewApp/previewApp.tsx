@@ -8,7 +8,7 @@ import { builtinComponentFactory } from "../../lib/builtin/componentFactory";
 import { BuiltinButton } from "../../lib/builtin/intrinsic/button";
 import { BuiltinInput } from "../../lib/builtin/intrinsic/input";
 import { DataForm } from "../../lib/form/form";
-import { GridGroup } from "../../lib/form/formUtils";
+import { GridGroup, GridItem } from "../../lib/form/formUtils";
 import { GFI } from "../../lib/formItem/formItem";
 import type {
   ComponentFactoryType,
@@ -389,7 +389,6 @@ export const PreviewApp = () => {
   return (
     <div
       style={{
-        width: "min(1800px, calc(100vw - 32px))",
         padding: 16,
         border: "1px solid rgba(255, 255, 255, 0.18)",
         borderRadius: 16,
@@ -399,7 +398,7 @@ export const PreviewApp = () => {
       }}
     >
       <DataForm
-        gridRowHeight="48px"
+        gridRowHeight="30px"
         componentFactory={previewComponentFactory}
         ConfirmButton={DeployButton}
         schema={deploymentSchema}
@@ -482,58 +481,58 @@ export const PreviewApp = () => {
           alert(`Deployment accepted:\n${JSON.stringify(data, null, 2)}`)
         }
       >
-        <GridGroup header="Distributed worker deployment">
-          <GridGroup split header="Identity and control plane">
-            <GridGroup split header="Identity">
-              {GFI("deploymentId")}
-              {GFI("serviceName")}
-              {GFI("region")}
-            </GridGroup>
-            <GridGroup split header="Control plane">
-              {GFI("controlAddress")}
-              {GFI("controlPort")}
-              {GFI("publicAccess")}
-            </GridGroup>
+        <GridGroup split header="Identity and control plane">
+          <GridGroup split header="Identity">
+            {GFI("deploymentId")}
+            {GFI("serviceName")}
+            {GFI("region")}
           </GridGroup>
-
-          <GridGroup split header="Capacity policy">
-            <GridGroup split header="Resources">
-              {GFI("workerCount")}
-              {GFI("cpuPerWorker")}
-              {GFI("memoryPerWorker")}
-            </GridGroup>
-            <GridGroup split header="Autoscaling">
-              {GFI("autoscaling")}
-              {GFI("minWorkers")}
-              {GFI("maxWorkers")}
-            </GridGroup>
+          <GridGroup split header="Control plane">
+            {GFI("controlAddress")}
+            {GFI("controlPort")}
+            {GFI("publicAccess")}
           </GridGroup>
-
-          <GridGroup split header="Reliability and trust">
-            <GridGroup split header="Retry policy">
-              {GFI("retryEnabled")}
-              {GFI("retryLimit")}
-              {GFI("retryBackoff")}
-            </GridGroup>
-            <GridGroup split header="Transport security">
-              {GFI("secureTransport")}
-              {GFI("certificateFingerprint")}
-              {GFI("certificateBundle")}
-            </GridGroup>
+        </GridGroup>
+        <GridItem />
+        <GridGroup split header="Capacity policy">
+          <GridGroup split header="Resources">
+            {GFI("workerCount")}
+            {GFI("cpuPerWorker")}
+            {GFI("memoryPerWorker")}
           </GridGroup>
+          <GridGroup split header="Autoscaling">
+            {GFI("autoscaling")}
+            {GFI("minWorkers")}
+            {GFI("maxWorkers")}
+          </GridGroup>
+        </GridGroup>
+        <GridItem />
 
-          <GridGroup split header="Observability and release">
-            <GridGroup split header="Telemetry">
-              {GFI("telemetryEnabled")}
-              {GFI("collectorAddress")}
-              {GFI("collectorPort")}
-              {GFI("sampleRate")}
-            </GridGroup>
-            <GridGroup header="Release controls">
-              {GFI("dryRun")}
-              {GFI("operatorNote")}
-              {GFI("connectivityProbe")}
-            </GridGroup>
+        <GridGroup split header="Reliability and trust">
+          <GridGroup split header="Retry policy">
+            {GFI("retryEnabled")}
+            {GFI("retryLimit")}
+            {GFI("retryBackoff")}
+          </GridGroup>
+          <GridGroup split header="Transport security">
+            {GFI("secureTransport")}
+            {GFI("certificateFingerprint")}
+            {GFI("certificateBundle")}
+          </GridGroup>
+        </GridGroup>
+        <GridItem />
+
+        <GridGroup split header="Observability and release">
+          <GridGroup split header="Telemetry">
+            {GFI("telemetryEnabled")}
+            {GFI("collectorAddress")}
+            {GFI("collectorPort")}
+            {GFI("sampleRate")}
+          </GridGroup>
+          <GridGroup header="Release controls">
+            {GFI("dryRun", 2)}
+            {GFI("operatorNote", 2)}
+            {GFI("connectivityProbe", 2)}
           </GridGroup>
         </GridGroup>
       </DataForm>

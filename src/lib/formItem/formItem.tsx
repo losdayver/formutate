@@ -8,8 +8,24 @@ const formItemGridStyle: CSSProperties = {
   display: "contents",
 };
 
+const labelLayoutStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  alignSelf: "center",
+  justifyContent: "flex-end",
+  minWidth: 0,
+};
+
+const labelTextLayoutStyle: CSSProperties = {
+  minWidth: 0,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
 const controlLayoutStyle: CSSProperties = {
   position: "relative",
+  alignSelf: "center",
   minWidth: 0,
 };
 
@@ -57,8 +73,13 @@ export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
   );
 };
 
-export const GFI = (fldKey: string, fromItemProps?: Partial<FormItemProps>) => (
-  <GridItem>
+export const GFI = (
+  fldKey: string,
+  colSpan?: number,
+  rowSpan?: number,
+  fromItemProps?: Partial<FormItemProps>
+) => (
+  <GridItem colSpan={colSpan} rowSpan={rowSpan}>
     <PreparedFormItem fldKey={fldKey} formItemProps={fromItemProps} />
   </GridItem>
 );
@@ -88,7 +109,7 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
       <div
         className="lsdvrform-form__label"
         style={{
-          alignSelf: "center",
+          ...labelLayoutStyle,
           ...(gridPositioning
             ? {
                 gridColumn: `${gridPositioning.label.col[0]} / ${gridPositioning.label.col[1]}`,
@@ -97,25 +118,29 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
             : {}),
         }}
       >
-        {title}
-        {required && (
-          <span className="lsdvrform-form__required" aria-hidden="true">
-            *
-          </span>
-        )}
-        {hint ? (
-          <span
-            className="lsdvrform-form__hint"
-            data-hint={hint}
-            aria-label={`Hint: ${hint}`}
-            tabIndex={0}
-          >
-            {"\u2754"}
-          </span>
-        ) : (
-          ""
-        )}
-        :
+        <span style={labelTextLayoutStyle} title={title}>
+          {title}
+        </span>
+        <span style={{ flexShrink: 0 }}>
+          {required && (
+            <span className="lsdvrform-form__required" aria-hidden="true">
+              *
+            </span>
+          )}
+          {hint ? (
+            <span
+              className="lsdvrform-form__hint"
+              data-hint={hint}
+              aria-label={`Hint: ${hint}`}
+              tabIndex={0}
+            >
+              {"\u2754"}
+            </span>
+          ) : (
+            ""
+          )}
+          <span aria-hidden="true">:</span>
+        </span>
       </div>
       <div
         className={`lsdvrform-form__control${notify?.message ? " lsdvrform-form__control--with-message" : ""}`}
