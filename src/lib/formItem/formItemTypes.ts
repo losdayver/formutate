@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, JSX } from "react";
 import { DataFormContextMediator } from "../form/dataFormContext";
 import { FormSchema } from "../form/formTypes";
+import { GridPositioning } from "../form/formUtils";
 
 export interface FormItemNotify<Keys extends string = string> {
   fld: Keys;
@@ -16,16 +17,7 @@ export interface FormItemProps {
   hint?: string;
   disabled?: boolean;
   componentFactory?: ComponentFactoryType;
-  gridPositioning?: {
-    label: {
-      vertical: { from: number; to: number };
-      horizontal: { from: number; to: number };
-    };
-    control: {
-      vertical: { from: number; to: number };
-      horizontal: { from: number; to: number };
-    };
-  };
+  gridPositioning?: GridPositioning;
 }
 
 export type ItemDescriptor<Schema extends FormSchema = any> = (

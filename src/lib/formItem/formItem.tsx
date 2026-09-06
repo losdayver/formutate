@@ -2,6 +2,7 @@ import { CSSProperties, useContext } from "react";
 import { DataFormContext } from "../form/dataFormContext";
 import { FormItemProps } from "./formItemTypes";
 import React from "react";
+import { GridItem, GridPositioning } from "../form/formUtils";
 
 const formItemGridStyle: CSSProperties = {
   display: "contents",
@@ -22,12 +23,14 @@ const messageLayoutStyle: CSSProperties = {
 
 export interface PreparedFormItemProps {
   fldKey: string;
-  additionalProps?: Partial<FormItemProps>;
+  formItemProps?: Partial<FormItemProps>;
+  gridPositioning?: GridPositioning;
 }
 
 export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
   fldKey,
-  additionalProps,
+  formItemProps,
+  gridPositioning,
 }) => {
   const mediator = useContext(DataFormContext)!;
   const { componentFactory, schema, formData, setFormData, errors } = mediator;
@@ -36,7 +39,12 @@ export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
   const error = errors.find((err) => err.fld == fldKey);
 
   return (
-    <FormItem {...descriptor} notify={error} {...additionalProps}>
+    <FormItem
+      {...descriptor}
+      notify={error}
+      {...formItemProps}
+      gridPositioning={gridPositioning}
+    >
       {componentFactory(descriptor, formData[fldKey], (val: any) => {
         const oldVal = formData[fldKey];
         descriptor.onBeforeChange?.(oldVal, val, mediator as any);
@@ -49,10 +57,11 @@ export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
   );
 };
 
-export const PFI = (
-  fldKey: string,
-  additionalProps?: Partial<FormItemProps>
-) => <PreparedFormItem fldKey={fldKey} additionalProps={additionalProps} />;
+export const GFI = (fldKey: string, fromItemProps?: Partial<FormItemProps>) => (
+  <GridItem>
+    <PreparedFormItem fldKey={fldKey} formItemProps={fromItemProps} />
+  </GridItem>
+);
 
 export const EmptyFormItem = () => <></>;
 
@@ -82,8 +91,8 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
           alignSelf: "center",
           ...(gridPositioning
             ? {
-                gridColumn: `${gridPositioning.label.horizontal.from} / ${gridPositioning.label.horizontal.to}`,
-                gridRow: `${gridPositioning.label.vertical.from} / ${gridPositioning.label.vertical.to}`,
+                gridColumn: `${gridPositioning.label.col[0]} / ${gridPositioning.label.col[1]}`,
+                gridRow: `${gridPositioning.label.row[0]} / ${gridPositioning.label.row[1]}`,
               }
             : {}),
         }}
@@ -114,8 +123,8 @@ export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
           ...controlLayoutStyle,
           ...(gridPositioning
             ? {
-                gridColumn: `${gridPositioning.control.horizontal.from} / ${gridPositioning.control.horizontal.to}`,
-                gridRow: `${gridPositioning.control.vertical.from} / ${gridPositioning.control.vertical.to}`,
+                gridColumn: `${gridPositioning.control.col[0]} / ${gridPositioning.control.col[1]}`,
+                gridRow: `${gridPositioning.control.row[0]} / ${gridPositioning.control.row[1]}`,
               }
             : {}),
         }}
