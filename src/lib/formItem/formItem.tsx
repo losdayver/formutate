@@ -2,7 +2,7 @@ import { CSSProperties, useContext } from "react";
 import { DataFormContext } from "../form/dataFormContext";
 import { FormItemProps } from "./formItemTypes";
 import React from "react";
-import { GridItem, GridPositioning } from "../form/formUtils";
+import { GridItem, GridPositioning } from "../form/gridUtils";
 
 const formItemGridStyle: CSSProperties = {
   display: "contents",

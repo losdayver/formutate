@@ -1,7 +1,6 @@
 import {
   Children,
   cloneElement,
-  ComponentProps,
   ComponentType,
   isValidElement,
   PropsWithChildren,
@@ -60,7 +59,6 @@ interface Cursor {
 
 interface BuiltChild {
   content: ReactNode;
-  /** Первая свободная позиция справа и снизу от построенного узла. */
   nextCursor: Cursor;
 }
 

@@ -7,7 +7,7 @@ import {
   DataFormProvider,
   DataFormContextMediator,
 } from "./dataFormContext";
-import { buildGrid, GridGroup } from "./formUtils";
+import { buildGrid, GridGroup } from "./gridUtils";
 
 const getFormStyle = (gridRowHeight?: string): CSSProperties => ({
   display: "grid",

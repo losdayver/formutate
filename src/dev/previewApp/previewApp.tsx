@@ -8,7 +8,7 @@ import { builtinComponentFactory } from "../../lib/builtin/componentFactory";
 import { BuiltinButton } from "../../lib/builtin/intrinsic/button";
 import { BuiltinInput } from "../../lib/builtin/intrinsic/input";
 import { DataForm } from "../../lib/form/form";
-import { GridGroup, GridItem } from "../../lib/form/formUtils";
+import { GridGroup, GridItem } from "../../lib/form/gridUtils";
 import { GFI } from "../../lib/formItem/formItem";
 import type {
   ComponentFactoryType,

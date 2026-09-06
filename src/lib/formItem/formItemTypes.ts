@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef, JSX } from "react";
 import { DataFormContextMediator } from "../form/dataFormContext";
 import { FormSchema } from "../form/formTypes";
-import { GridPositioning } from "../form/formUtils";
+import { GridPositioning } from "../form/gridUtils";
 
 export interface FormItemNotify<Keys extends string = string> {
   fld: Keys;
