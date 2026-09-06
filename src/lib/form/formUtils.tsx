@@ -62,7 +62,11 @@ interface BuiltChild {
   nextCursor: Cursor;
 }
 
-const buildChild = (child: ReactNode, cursor: Cursor): BuiltChild => {
+const buildChild = (
+  child: ReactNode,
+  cursor: Cursor,
+  groupDepth = 1
+): BuiltChild => {
   if (isGridItem(child)) {
     const gridItem = child;
 
@@ -107,7 +111,11 @@ const buildChild = (child: ReactNode, cursor: Cursor): BuiltChild => {
     const contentRow: ReactNode[] = [];
 
     Children.map(group.props.children, (child) => {
-      const { content, nextCursor } = buildChild(child, childCursor);
+      const { content, nextCursor } = buildChild(
+        child,
+        childCursor,
+        groupDepth + 1
+      );
 
       bounds = {
         row: Math.max(bounds.row, nextCursor.row),
@@ -124,11 +132,11 @@ const buildChild = (child: ReactNode, cursor: Cursor): BuiltChild => {
     if (group.props.header)
       contentRow.unshift(
         <div
-          className="lsdvrform-form__group-header"
+          className={`lsdvrform-form__group-header lsdvrform-form__group-header__${groupDepth}`}
           style={{
             alignSelf: "center",
             gridColumn: `${cursor.col} / ${bounds.col}`,
-            gridRow: `${cursor.row} / ${cursor.row}`,
+            gridRow: `${cursor.row} / ${cursor.row + 1}`,
           }}
         >
           {group.props.header}

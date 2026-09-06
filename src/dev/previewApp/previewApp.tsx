@@ -389,6 +389,8 @@ export const PreviewApp = () => {
   return (
     <div
       style={{
+        width: "min(1100px, calc(100vw - 32px))",
+        margin: "16px auto",
         padding: 16,
         border: "1px solid rgba(255, 255, 255, 0.18)",
         borderRadius: 16,
@@ -398,7 +400,7 @@ export const PreviewApp = () => {
       }}
     >
       <DataForm
-        gridRowHeight="30px"
+        gridRowHeight="42px"
         componentFactory={previewComponentFactory}
         ConfirmButton={DeployButton}
         schema={deploymentSchema}
@@ -481,7 +483,7 @@ export const PreviewApp = () => {
           alert(`Deployment accepted:\n${JSON.stringify(data, null, 2)}`)
         }
       >
-        <GridGroup split header="Identity and control plane">
+        <GridGroup header="Identity and control plane">
           <GridGroup split header="Identity">
             {GFI("deploymentId")}
             {GFI("serviceName")}
@@ -494,7 +496,7 @@ export const PreviewApp = () => {
           </GridGroup>
         </GridGroup>
         <GridItem />
-        <GridGroup split header="Capacity policy">
+        <GridGroup header="Capacity policy">
           <GridGroup split header="Resources">
             {GFI("workerCount")}
             {GFI("cpuPerWorker")}
@@ -508,7 +510,7 @@ export const PreviewApp = () => {
         </GridGroup>
         <GridItem />
 
-        <GridGroup split header="Reliability and trust">
+        <GridGroup header="Reliability and trust">
           <GridGroup split header="Retry policy">
             {GFI("retryEnabled")}
             {GFI("retryLimit")}
@@ -522,17 +524,21 @@ export const PreviewApp = () => {
         </GridGroup>
         <GridItem />
 
-        <GridGroup split header="Observability and release">
-          <GridGroup split header="Telemetry">
-            {GFI("telemetryEnabled")}
-            {GFI("collectorAddress")}
-            {GFI("collectorPort")}
-            {GFI("sampleRate")}
+        <GridGroup header="Observability and release">
+          <GridGroup split>
+            <GridGroup split header="Telemetry1">
+              {GFI("telemetryEnabled")}
+              {GFI("collectorAddress")}
+            </GridGroup>
+            <GridGroup split header="Telemetry2">
+              {GFI("collectorPort")}
+              {GFI("sampleRate")}
+            </GridGroup>
           </GridGroup>
-          <GridGroup header="Release controls">
-            {GFI("dryRun", 2)}
-            {GFI("operatorNote", 2)}
-            {GFI("connectivityProbe", 2)}
+          <GridGroup split header="Release controls">
+            {GFI("dryRun")}
+            {GFI("operatorNote")}
+            {GFI("connectivityProbe")}
           </GridGroup>
         </GridGroup>
       </DataForm>
