@@ -75,11 +75,13 @@ export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
 
 export const GFI = (
   fldKey: string,
-  colSpan?: number,
-  rowSpan?: number,
+  gridItemProps?: Omit<
+    React.ComponentProps<typeof GridItem>,
+    "children" | "gridPositioning"
+  >,
   fromItemProps?: Partial<FormItemProps>
 ) => (
-  <GridItem colSpan={colSpan} rowSpan={rowSpan}>
+  <GridItem {...gridItemProps}>
     <PreparedFormItem fldKey={fldKey} formItemProps={fromItemProps} />
   </GridItem>
 );

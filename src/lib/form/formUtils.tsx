@@ -21,8 +21,10 @@ type GridGroupProps = PropsWithChildren<{
 
 type GridItemProps = PropsWithChildren<{
   gridPositioning?: GridPositioning;
-  colSpan?: number;
-  rowSpan?: number;
+  labelColSpan?: number;
+  labelRowSpan?: number;
+  controlColSpan?: number;
+  controlRowSpan?: number;
 }>;
 
 export const GridItem: ComponentType<PropsWithChildren<GridItemProps>> = ({
@@ -70,27 +72,31 @@ const buildChild = (
 ): BuiltChild => {
   if (isGridItem(child)) {
     const gridItem = child;
+    const labelColEnd = cursor.col + (gridItem.props.labelColSpan ?? 1);
+    const labelRowEnd = cursor.row + (gridItem.props.labelRowSpan ?? 1);
+    const controlRowEnd = cursor.row + (gridItem.props.controlRowSpan ?? 1);
+    const controlColEnd =
+      gridItem.props.controlColSpan === undefined
+        ? (rightEdge ?? labelColEnd + 1)
+        : labelColEnd + gridItem.props.controlColSpan;
 
     return {
       content: cloneElement(gridItem, {
         ...gridItem.props,
         gridPositioning: {
           label: {
-            row: [cursor.row, cursor.row + 1 + (gridItem.props.rowSpan ?? 0)],
-            col: [cursor.col, cursor.col + 1],
+            row: [cursor.row, labelRowEnd],
+            col: [cursor.col, labelColEnd],
           },
           control: {
-            row: [cursor.row, cursor.row + 1 + (gridItem.props.rowSpan ?? 0)],
-            col: [
-              cursor.col + 1,
-              rightEdge ?? cursor.col + 2 + (gridItem.props.colSpan ?? 0),
-            ],
+            row: [cursor.row, controlRowEnd],
+            col: [labelColEnd, controlColEnd],
           },
         },
       }),
       nextCursor: {
-        row: cursor.row + 1 + (gridItem.props.rowSpan ?? 0),
-        col: rightEdge ?? cursor.col + 2 + (gridItem.props.colSpan ?? 0),
+        row: Math.max(labelRowEnd, controlRowEnd),
+        col: controlColEnd,
       },
     };
   }
@@ -104,7 +110,8 @@ const buildChild = (
     };
 
     let childCursor = { ...cursor };
-    // Always the right lowest point
+
+    // Always the rightmost lowest point
     let bounds = { ...cursor };
 
     if (group.props.header) childCursor.row += 1;
@@ -118,7 +125,9 @@ const buildChild = (
         child,
         childCursor,
         groupDepth + 1,
-        group.props.split && index < groupChildren.length - 1 ? undefined : rightEdge
+        group.props.split && index < groupChildren.length - 1
+          ? undefined
+          : rightEdge
       );
 
       bounds = {

@@ -34,14 +34,7 @@ type DeploymentField =
   | "retryBackoff"
   | "secureTransport"
   | "certificateFingerprint"
-  | "certificateBundle"
-  | "telemetryEnabled"
-  | "collectorAddress"
-  | "collectorPort"
-  | "sampleRate"
-  | "dryRun"
-  | "operatorNote"
-  | "connectivityProbe";
+  | "certificateBundle";
 
 const integerRangeValidator = (
   min: number,
@@ -260,92 +253,6 @@ const deploymentSchema: Record<DeploymentField, ItemDescriptor> = {
     hint: "Optional PEM bundle; a fingerprint or bundle is required",
     componentProps: { accept: ".pem,.crt,.cer" },
   },
-  telemetryEnabled: {
-    title: "Export telemetry",
-    component: "checkbox",
-    onBeforeChange: (wasEnabled, enabled, mediator) => {
-      if (wasEnabled && !enabled) {
-        mediator.setFormData((data) => ({
-          ...data,
-          collectorAddress: undefined,
-          collectorPort: undefined,
-          sampleRate: undefined,
-        }));
-      }
-    },
-    onAfterChange: (_, enabled, mediator) => {
-      mediator.setSchema((schema) => ({
-        ...schema,
-        collectorAddress: {
-          ...schema.collectorAddress,
-          disabled: !enabled,
-          required: Boolean(enabled),
-        },
-        collectorPort: {
-          ...schema.collectorPort,
-          disabled: !enabled,
-          required: Boolean(enabled),
-        },
-        sampleRate: {
-          ...schema.sampleRate,
-          disabled: !enabled,
-          required: Boolean(enabled),
-        },
-      }));
-    },
-  },
-  collectorAddress: {
-    title: "Collector address",
-    component: "input",
-    required: true,
-    validator: addressFormValidator,
-    componentProps: { placeholder: "10.24.8.40" },
-  },
-  collectorPort: {
-    title: "Collector port",
-    component: "inputNum",
-    required: true,
-    validator: portFormValidator,
-    componentProps: { min: 1, max: 65525 },
-  },
-  sampleRate: {
-    title: "Sample rate, %",
-    component: "inputNum",
-    required: true,
-    validator: integerRangeValidator(1, 100, "Sample rate"),
-    componentProps: { min: 1, max: 100 },
-  },
-  dryRun: {
-    title: "Dry run",
-    component: "checkbox",
-    hint: "Validate the deployment plan without starting workers",
-    onAfterChange: (_, enabled, mediator) => {
-      mediator.setSchema((schema) => ({
-        ...schema,
-        publicAccess: {
-          ...schema.publicAccess,
-          disabled: Boolean(enabled),
-        },
-      }));
-    },
-  },
-  operatorNote: {
-    title: "Operator note",
-    component: "input",
-    componentProps: {
-      placeholder: "Change request or incident reference",
-      maxLength: 120,
-    },
-  },
-  connectivityProbe: {
-    title: "Preflight probe",
-    component: "button",
-    componentProps: {
-      children: "Probe endpoints",
-      type: "button",
-      onClick: () => alert("Controller and telemetry endpoints are reachable"),
-    },
-  },
 };
 
 const previewComponentFactory: ComponentFactoryType = (
@@ -389,7 +296,7 @@ export const PreviewApp = () => {
   return (
     <div
       style={{
-        width: "min(1500px, calc(100vw - 32px))",
+        width: "1000px",
         margin: "16px auto",
         padding: 16,
         border: "1px solid rgba(255, 255, 255, 0.18)",
@@ -422,12 +329,6 @@ export const PreviewApp = () => {
           retryBackoff: 1500,
           secureTransport: true,
           certificateFingerprint: "97fcb74a7f44c0064a6e89c80d61e9d453c8e9af",
-          telemetryEnabled: true,
-          collectorAddress: "10.24.8.40",
-          collectorPort: 4317,
-          sampleRate: 25,
-          dryRun: false,
-          operatorNote: "CR-4812: production capacity expansion",
         }}
         customValidate={(data) => {
           const issues: FormItemNotify<DeploymentField>[] = [];
@@ -483,62 +384,50 @@ export const PreviewApp = () => {
           alert(`Deployment accepted:\n${JSON.stringify(data, null, 2)}`)
         }
       >
-        <GridGroup header="Identity and control plane">
-          <GridGroup split header="Identity">
-            {GFI("deploymentId")}
-            {GFI("serviceName")}
-            {GFI("region")}
-          </GridGroup>
-          <GridGroup split header="Control plane">
-            {GFI("controlAddress", 2)}
-            {GFI("controlPort")}
+        <GridGroup header="Deployment identity">
+          {GFI("deploymentId", { controlColSpan: 1 })}
+          {GFI("serviceName", { controlColSpan: 1 })}
+          <GridGroup split header="Placement and exposure">
+            {GFI("region", { controlColSpan: 1 })}
             {GFI("publicAccess")}
           </GridGroup>
         </GridGroup>
+
         <GridItem />
-        <GridGroup header="Capacity policy">
-          <GridGroup split header="Resources">
+
+        <GridGroup split header="Capacity policy">
+          <GridGroup header="Resources in one compact row">
             {GFI("workerCount")}
             {GFI("cpuPerWorker")}
             {GFI("memoryPerWorker")}
           </GridGroup>
-          <GridGroup split header="Autoscaling">
+
+          <GridGroup header="Autoscaling">
             {GFI("autoscaling")}
-            {GFI("minWorkers")}
-            {GFI("maxWorkers")}
+            <GridGroup header="A deliberately narrow worker range">
+              {GFI("minWorkers", { controlColSpan: 1 })}
+              {GFI("maxWorkers", { controlColSpan: 1 })}
+              <GridItem />
+            </GridGroup>
           </GridGroup>
         </GridGroup>
-        <GridItem />
 
-        <GridGroup header="Reliability and trust">
-          <GridGroup split header="Retry policy">
-            {GFI("retryEnabled")}
-            {GFI("retryLimit")}
-            {GFI("retryBackoff")}
+        <GridGroup header="Connectivity and trust" split>
+          <GridGroup header="Control endpoint">
+            {GFI("controlAddress", { controlColSpan: 1 })}
+            {GFI("controlPort", { controlColSpan: 1 })}
           </GridGroup>
-          <GridGroup split header="Transport security">
+
+          <GridGroup header="Transport security">
             {GFI("secureTransport")}
-            {GFI("certificateFingerprint")}
-            {GFI("certificateBundle")}
-          </GridGroup>
-        </GridGroup>
-        <GridItem />
-
-        <GridGroup header="Observability and release">
-          <GridGroup split>
-            <GridGroup split header="Telemetry1">
-              {GFI("telemetryEnabled")}
-              {GFI("collectorAddress")}
-            </GridGroup>
-            <GridGroup split header="Telemetry2">
-              {GFI("collectorPort")}
-              {GFI("sampleRate")}
-            </GridGroup>
-          </GridGroup>
-          <GridGroup split header="Release controls">
-            {GFI("dryRun")}
-            {GFI("operatorNote")}
-            {GFI("connectivityProbe")}
+            {GFI("certificateFingerprint", {
+              labelColSpan: 1,
+              controlColSpan: 1,
+            })}
+            {GFI("certificateBundle", {
+              labelColSpan: 1,
+              controlColSpan: 1,
+            })}
           </GridGroup>
         </GridGroup>
       </DataForm>
