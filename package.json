@@ -10,13 +10,13 @@
     "schema",
     "typescript"
   ],
-  "homepage": "https://github.com/losdayver/data-form#readme",
+  "homepage": "https://github.com/losdayver/formutate#readme",
   "bugs": {
-    "url": "https://github.com/losdayver/data-form/issues"
+    "url": "https://github.com/losdayver/formutate/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/losdayver/data-form.git"
+    "url": "git+https://github.com/losdayver/formutate.git"
   },
   "license": "MIT",
   "author": "losdayver",
