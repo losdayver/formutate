@@ -15,13 +15,13 @@ export type FormSchema<KeysType extends object = Record<string, unknown>> =
   Record<Extract<keyof KeysType, string>, ItemDescriptor>;
 
 export type InferDataFromSchema<Schema extends FormSchema> = {
-  [Key in keyof Schema as Schema[Key] extends { required: true }
-    ? Key
-    : never]-?: DescriptorsValueTypes[Schema[Key]["component"]];
+  [
+    Key in keyof Schema as Schema[Key] extends { required: true } ? Key : never
+  ]-?: DescriptorsValueTypes[Schema[Key]["component"]];
 } & {
-  [Key in keyof Schema as Schema[Key] extends { required: true }
-    ? never
-    : Key]?: DescriptorsValueTypes[Schema[Key]["component"]];
+  [
+    Key in keyof Schema as Schema[Key] extends { required: true } ? never : Key
+  ]?: DescriptorsValueTypes[Schema[Key]["component"]];
 };
 
 export interface FormProps<Schema extends FormSchema> {

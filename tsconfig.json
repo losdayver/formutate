@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "../dist/frontend",
-    "target": "esnext",
-    "lib": ["ES2024", "DOM"],
+    "outDir": "dist/lib",
+
     "module": "esnext",
+    "target": "esnext",
+
+    "lib": ["ES2024", "DOM"],
+
+    "declaration": true,
+    "declarationMap": true,
+    "declarationDir": "dist/types",
+
     "moduleDetection": "force",
-    "noEmit": true,
+
     "strictNullChecks": true,
     "noImplicitAny": false,
+
     "jsx": "react-jsx",
+
+    "noEmitOnError": true,
+
     "noUncheckedSideEffectImports": false
   },
   "include": ["src"]
