@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef, JSX } from "react";
-import { DataFormContextMediator } from "../form/dataFormContext";
-import { FormSchema } from "../form/formTypes";
-import { GridPositioning } from "../form/formUtils";
+import { DataFormContextMediator } from "../form/dataFormContext.js";
+import { FormSchema } from "../form/formTypes.js";
+import { GridPositioning } from "../form/gridUtils.js";
 
 export interface FormItemNotify<Keys extends string = string> {
   fld: Keys;
@@ -26,6 +26,7 @@ export type ItemDescriptor<Schema extends FormSchema = any> = (
   | FileInputItemDescriptor
   | InputNumItemDescriptor
   | ButtonItemDescriptor
+  | CustomItemDescriptor
 ) & {
   title: string;
   validator?: (value: any) => Omit<FormItemNotify, "fld"> | void;
@@ -33,11 +34,12 @@ export type ItemDescriptor<Schema extends FormSchema = any> = (
   hint?: string;
   disabled?: boolean;
   placeholder?: string;
-  onBeforeChange?: (
+  // Map incoming value to something else before it is commited to form data
+  mapOnChange?: (
     oldVal: any,
     newVal: any,
     mediator: DataFormContextMediator<Schema>
-  ) => void;
+  ) => any;
   onAfterChange?: (
     oldVal: any,
     newVal: any,
@@ -70,12 +72,19 @@ interface ButtonItemDescriptor {
   componentProps?: ComponentPropsWithoutRef<"button">;
 }
 
+interface CustomItemDescriptor {
+  component: "custom";
+  customName: string;
+  componentProps?: any;
+}
+
 export interface DescriptorsValueTypes {
   input: string;
   inputNum: number;
   checkbox: boolean;
   file: string;
   button: never;
+  custom: any;
 }
 
 export type ComponentFactoryType = (
