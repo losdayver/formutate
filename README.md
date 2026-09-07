@@ -67,7 +67,7 @@ import "formutate/data-form.css";
 import "formutate/data-form-headers.css";
 ```
 
-Import either file, both files, or neither. Do not additionally import `formutate/styles.css` when both individual files are already imported.
+Import any combination of these files or none of them. Do not additionally import `formutate/styles.css` when all individual files are already imported.
 
 ## Custom layout
 
