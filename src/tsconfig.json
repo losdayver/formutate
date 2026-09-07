@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "rootDir": "src/lib",
-    "outDir": "./dist/lib",
+    "rootDir": ".",
+
+    "noEmit": true,
 
     "module": "esnext",
     "target": "esnext",
 
     "lib": ["ES2024", "DOM"],
-
-    "declaration": true,
-    "declarationDir": "./dist/types",
 
     "moduleDetection": "force",
 
@@ -22,6 +20,5 @@
 
     "noUncheckedSideEffectImports": false
   },
-  "include": ["src/lib"],
-  "exclude": ["src/dev"]
+  "include": ["dev"]
 }

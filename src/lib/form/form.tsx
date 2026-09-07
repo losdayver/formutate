@@ -1,20 +1,20 @@
 import { CSSProperties, PropsWithChildren, useContext } from "react";
-import { PreparedFormItem } from "../formItem/formItem";
-import { FormProps, FormSchema } from "./formTypes";
-import { BuiltinButton } from "../builtin/intrinsic/button";
+import { GFI, PreparedFormItem } from "../formItem/formItem.js";
+import { FormProps, FormSchema } from "./formTypes.js";
+import { BuiltinButton } from "../builtin/intrinsic/button.js";
 import {
   getDataFormContext,
   DataFormProvider,
   DataFormContextMediator,
-} from "./dataFormContext";
-import { buildGrid, GridGroup } from "./formUtils";
+} from "./dataFormContext.js";
+import { buildGrid, GridGroup } from "./gridUtils.js";
 
-const getFormStyle = (gridRowHeight?: string): CSSProperties => ({
+const formStyle = {
   display: "grid",
   gridAutoColumns: "150px minmax(100px, 1.3fr)",
-  gridAutoRows: `${gridRowHeight ? gridRowHeight : "minmax(30px, 1fr)"}`,
+  gridAutoRows: "minmax(30px, 1fr)",
   gap: 20,
-});
+};
 
 export const DataForm = <Schema extends FormSchema>(
   props: PropsWithChildren<FormProps<Schema>>
@@ -26,8 +26,8 @@ export const DataForm = <Schema extends FormSchema>(
 
 const DataFormContent = <Schema extends FormSchema>({
   children,
-  ConfirmButton,
-  gridRowHeight,
+  confirmButtonProps,
+  gridStyle,
 }: PropsWithChildren<FormProps<Schema>>) => {
   const mediator =
     useContext<DataFormContextMediator<Schema>>(getDataFormContext<Schema>());
@@ -39,26 +39,26 @@ const DataFormContent = <Schema extends FormSchema>({
 
   return (
     <div>
-      <form className="lsdvrform-form" style={getFormStyle(gridRowHeight)}>
+      <form
+        className="lsdvrform-form"
+        style={{ ...formStyle, ...(gridStyle ?? {}) }}
+      >
         {children
           ? buildGrid(children)
           : buildGrid(
               <GridGroup>
-                {Object.entries(mediatedSchema).map(([fldKey]) => {
-                  return <PreparedFormItem key={fldKey} fldKey={fldKey} />;
-                })}
+                {Object.entries(mediatedSchema).map(([fldKey]) => GFI(fldKey))}
               </GridGroup>
             )}
       </form>
-      {ConfirmButton ? (
-        <ConfirmButton className="lsdvrform-form__submit" onClick={confirm}>
-          Confirm
-        </ConfirmButton>
-      ) : (
-        <BuiltinButton className="lsdvrform-form__submit" onClick={confirm}>
-          Confirm
-        </BuiltinButton>
-      )}
+      <br />
+      <BuiltinButton
+        className="lsdvrform-form__submit"
+        onClick={confirm}
+        {...confirmButtonProps}
+      >
+        {confirmButtonProps?.children ?? "Confirm"}
+      </BuiltinButton>
     </div>
   );
 };

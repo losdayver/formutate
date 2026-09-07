@@ -1,4 +1,4 @@
-import { ItemDescriptor } from "../formItem/formItemTypes";
+import { ItemDescriptor } from "../formItem/formItemTypes.js";
 
 export const tagFormValidator: ItemDescriptor["validator"] = (
   value: string

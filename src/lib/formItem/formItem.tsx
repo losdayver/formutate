@@ -1,8 +1,8 @@
 import { CSSProperties, useContext } from "react";
-import { DataFormContext } from "../form/dataFormContext";
-import { FormItemProps } from "./formItemTypes";
+import { DataFormContext } from "../form/dataFormContext.js";
+import { FormItemProps, ItemDescriptor } from "./formItemTypes.js";
 import React from "react";
-import { GridItem, GridPositioning } from "../form/formUtils";
+import { GridItem, GridPositioning } from "../form/gridUtils.js";
 
 const formItemGridStyle: CSSProperties = {
   display: "contents",
@@ -43,6 +43,7 @@ export interface PreparedFormItemProps {
   gridPositioning?: GridPositioning;
 }
 
+/** Represent FormItem that is bound by context and cant identify itself by fldKey */
 export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
   fldKey,
   formItemProps,
@@ -51,7 +52,7 @@ export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
   const mediator = useContext(DataFormContext)!;
   const { componentFactory, schema, formData, setFormData, errors } = mediator;
 
-  const descriptor = schema[fldKey];
+  const descriptor = schema[fldKey] as ItemDescriptor<any>;
   const error = errors.find((err) => err.fld == fldKey);
 
   return (
@@ -63,16 +64,17 @@ export const PreparedFormItem: React.FC<PreparedFormItemProps> = ({
     >
       {componentFactory(descriptor, formData[fldKey], (val: any) => {
         const oldVal = formData[fldKey];
-        descriptor.onBeforeChange?.(oldVal, val, mediator as any);
+        const newVal = descriptor.mapOnChange?.(oldVal, val, mediator) ?? val;
         setFormData((prev) =>
-          Object.is(prev[fldKey], val) ? prev : { ...prev, [fldKey]: val }
+          Object.is(prev[fldKey], newVal) ? prev : { ...prev, [fldKey]: newVal }
         );
-        descriptor.onAfterChange?.(oldVal, val, mediator as any);
+        descriptor.onAfterChange?.(oldVal, newVal, mediator as any);
       })}
     </FormItem>
   );
 };
 
+/** Stands for Grid Form Item. Represents single component with a label to be positioned inside a grid */
 export const GFI = (
   fldKey: string,
   gridItemProps?: Omit<
@@ -86,6 +88,7 @@ export const GFI = (
   </GridItem>
 );
 
+/** Consist of a label and a component */
 export const FormItem: React.FC<React.PropsWithChildren<FormItemProps>> = ({
   children,
   required,

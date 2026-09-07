@@ -1,28 +1,75 @@
 {
-  "name": "data-form",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch-dev": "vite",
-    "build-package": "vite"
+  "name": "formutate",
+  "version": "0.1.0",
+  "description": "A data-first React framework for building type-safe forms",
+  "keywords": [
+    "data-driven",
+    "form",
+    "form-builder",
+    "react",
+    "schema",
+    "typescript"
+  ],
+  "homepage": "https://github.com/losdayver/formutate#readme",
+  "bugs": {
+    "url": "https://github.com/losdayver/formutate/issues"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/losdayver/formutate.git"
+  },
+  "license": "MIT",
+  "author": "losdayver",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/lib/exports/exports.js",
+  "types": "./dist/types/exports/exports.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/exports/exports.d.ts",
+      "import": "./dist/lib/exports/exports.js",
+      "default": "./dist/lib/exports/exports.js"
+    },
+    "./styles.css": "./dist/lib/styles.css",
+    "./intrinsic.css": "./dist/lib/builtin/intrinsic.css",
+    "./data-form.css": "./dist/lib/builtin/data-form.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc && node scripts/build-assets.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/lib",
+    "format": "prettier --config .prettierrc --write .",
+    "format:check": "prettier --config .prettierrc --check .",
+    "check": "npm run format:check && npm run lint && npm run build",
+    "watch-dev": "vite",
+    "prepack": "npm run check",
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "eslint": "^10.10.0",
+    "prettier": "^3.9.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "typescript": "^6.0.3",
     "vite": "^8.2.2"
   },
   "peerDependencies": {
-    "react": ">=16.0.0",
-    "react-dom": ">=16.0.0"
+    "react": ">=18.0.0 <20.0.0",
+    "react-dom": ">=18.0.0 <20.0.0"
   }
 }

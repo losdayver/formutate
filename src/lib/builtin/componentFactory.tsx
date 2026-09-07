@@ -1,8 +1,12 @@
-import { ItemDescriptor } from "../formItem/formItemTypes";
-import { BuiltinCheckbox } from "./intrinsic/checkbox";
-import { BuiltinInput } from "./intrinsic/input";
+import {
+  ComponentFactoryType,
+  ItemDescriptor,
+} from "../formItem/formItemTypes.js";
+import { BuiltinButton } from "./intrinsic/button.js";
+import { BuiltinCheckbox } from "./intrinsic/checkbox.js";
+import { BuiltinInput } from "./intrinsic/input.js";
 
-export const builtinComponentFactory = (
+export const builtinComponentFactory: ComponentFactoryType = (
   descriptor: ItemDescriptor,
   value: any,
   onChange: (val: any) => void
@@ -12,9 +16,7 @@ export const builtinComponentFactory = (
       return (
         <BuiltinInput
           {...descriptor?.componentProps}
-          disabled={
-            descriptor.disabled ?? descriptor.componentProps?.disabled
-          }
+          disabled={descriptor.disabled ?? descriptor.componentProps?.disabled}
           value={value ?? ""}
           onChange={(event) => onChange(event.target.value)}
         />
@@ -23,9 +25,7 @@ export const builtinComponentFactory = (
       return (
         <BuiltinInput
           {...descriptor?.componentProps}
-          disabled={
-            descriptor.disabled ?? descriptor.componentProps?.disabled
-          }
+          disabled={descriptor.disabled ?? descriptor.componentProps?.disabled}
           type="number"
           value={value ?? ""}
           onChange={(event) => {
@@ -45,16 +45,27 @@ export const builtinComponentFactory = (
         <BuiltinCheckbox
           {...descriptor?.componentProps}
           checked={Boolean(value)}
-          disabled={
-            descriptor.disabled ?? descriptor.componentProps?.disabled
-          }
+          disabled={descriptor.disabled ?? descriptor.componentProps?.disabled}
           onChange={(event) => onChange(event.target.checked)}
+        />
+      );
+    case "button":
+      return (
+        <BuiltinButton
+          {...descriptor.componentProps}
+          disabled={descriptor.disabled ?? descriptor.componentProps?.disabled}
         />
       );
     case "file":
       return (
-        <></>
-        // <FileInput {...descriptor} value={value} onPathChange={onChange} />
+        <BuiltinInput
+          {...descriptor.componentProps}
+          type="file"
+          disabled={descriptor.disabled ?? descriptor.componentProps?.disabled}
+          onChange={(event) =>
+            onChange(event.currentTarget.files?.item(0)?.name ?? "")
+          }
+        />
       );
     default:
       return <></>;

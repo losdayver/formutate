@@ -1,7 +1,6 @@
 import {
   Children,
   cloneElement,
-  ComponentProps,
   ComponentType,
   isValidElement,
   PropsWithChildren,
@@ -60,7 +59,6 @@ interface Cursor {
 
 interface BuiltChild {
   content: ReactNode;
-  /** Первая свободная позиция справа и снизу от построенного узла. */
   nextCursor: Cursor;
 }
 
@@ -151,6 +149,7 @@ const buildChild = (
             gridColumn: `${cursor.col} / ${bounds.col}`,
             gridRow: `${cursor.row} / ${cursor.row + 1}`,
           }}
+          key={`lsdvrform-form__group-header${cursor.col}/${bounds.col}:${cursor.row}/${cursor.row + 1}`}
         >
           {group.props.header}
         </div>
