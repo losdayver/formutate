@@ -10,6 +10,8 @@ A data-first React framework for building type-safe forms from declarative schem
 2. Install dependencies with `npm install`
 3. run `npm run watch-dev`, this will launch the preview app which will be available at `http://localhost:5173/`
 
+![Complex form made with formutate](./promo/formutate-complex-form.png)
+
 ## Installation
 
 ```bash
