@@ -1,21 +1,37 @@
 {
   "name": "data-form",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Component library agnostic and data centred UI form framework",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "npx prettier --config .prettierrc --write .",
+    "lint": "npx eslint src",
     "watch-dev": "vite",
-    "build-package": "vite build"
+    "build": "npx tsc",
+    "build-package": "npm run format && npm run lint && npx tsc && npm pack"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "main": "dist/lib/exports/exports.js",
+  "types": "dist/lib/types",
+  "exports": {
+    ".": {
+      "types": "dist/lib/types/exports/exports.d.ts",
+      "import": "dist/lib/exports/exports.js"
+    }
+  },
+  "keywords": [
+    "form",
+    "html-form",
+    "react-form"
+  ],
+  "author": "losdayver",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "eslint": "^10.10.0",
     "prettier": "^3.9.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

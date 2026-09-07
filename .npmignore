@@ -1,0 +1,13 @@
+dist/dev/
+node_modules/
+
+src/
+
+vite.config.ts
+eslint.config.mjs
+tsconfig.json
+.vscode
+.prettierrc
+
+*.tgz
+*.test.js

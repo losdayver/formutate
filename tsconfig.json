@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist/lib",
+    "outDir": "./dist/lib",
 
     "module": "esnext",
     "target": "esnext",
@@ -10,7 +10,7 @@
 
     "declaration": true,
     "declarationMap": true,
-    "declarationDir": "dist/types",
+    "declarationDir": "./dist/types",
 
     "moduleDetection": "force",
 
@@ -23,5 +23,6 @@
 
     "noUncheckedSideEffectImports": false
   },
-  "include": ["src"]
+  "include": ["src/lib"],
+  "exclude": ["src/dev"]
 }
