@@ -104,6 +104,46 @@
     transform 180ms ease;
 }
 
+.lsdvrform-intrinsic-input[type="file"] {
+  padding: 0 13px 0 0;
+  overflow: hidden;
+  color: rgba(232, 238, 247, 0.72);
+  line-height: 34px;
+  cursor: pointer;
+}
+
+.lsdvrform-intrinsic-input[type="file"]::file-selector-button {
+  height: 34px;
+  margin-right: 13px;
+  padding: 0 14px;
+  border: 0;
+  border-right: 1px solid rgba(105, 245, 211, 0.24);
+  color: #f8ffff;
+  font: inherit;
+  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    rgba(105, 245, 211, 0.2),
+    rgba(141, 114, 255, 0.26)
+  );
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    filter 160ms ease;
+}
+
+.lsdvrform-intrinsic-input[type="file"]:not(
+    :disabled
+  ):hover::file-selector-button {
+  background-color: rgba(105, 245, 211, 0.12);
+  filter: brightness(1.18);
+}
+
+.lsdvrform-intrinsic-input[type="file"]:disabled::file-selector-button {
+  color: rgba(230, 237, 246, 0.4);
+  cursor: not-allowed;
+}
+
 .lsdvrform-intrinsic-input::placeholder {
   color: rgba(209, 219, 237, 0.38);
 }
