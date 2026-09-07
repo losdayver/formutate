@@ -1,17 +1,13 @@
-import type { ComponentPropsWithoutRef } from "react";
 import {
   addressFormValidator,
   portFormValidator,
   tagFormValidator,
 } from "../../lib/builtin/commonFormValidators";
 import { builtinComponentFactory } from "../../lib/builtin/componentFactory";
-import { BuiltinButton } from "../../lib/builtin/intrinsic/button";
-import { BuiltinInput } from "../../lib/builtin/intrinsic/input";
 import { DataForm } from "../../lib/form/form";
 import { GridGroup, GridItem } from "../../lib/form/gridUtils";
 import { GFI } from "../../lib/formItem/formItem";
 import type {
-  ComponentFactoryType,
   FormItemNotify,
   ItemDescriptor,
 } from "../../lib/formItem/formItemTypes";

@@ -1,36 +1,60 @@
 {
   "name": "formutate",
   "version": "0.1.0",
-  "description": "A data-first framework for building type-safe forms",
-  "type": "module",
-  "scripts": {
-    "format": "npx prettier --config .prettierrc --write .",
-    "lint": "npx eslint src",
-    "watch-dev": "vite",
-    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
-    "build": "npm run clean && tsc",
-    "prepack": "npm run build",
-    "build-package": "npm run format && npm run lint && npm pack"
+  "description": "A data-first React framework for building type-safe forms",
+  "keywords": [
+    "data-driven",
+    "form",
+    "form-builder",
+    "react",
+    "schema",
+    "typescript"
+  ],
+  "homepage": "https://github.com/losdayver/data-form#readme",
+  "bugs": {
+    "url": "https://github.com/losdayver/data-form/issues"
   },
-  "main": "dist/lib/exports/exports.js",
-  "types": "dist/types/exports/exports.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/losdayver/data-form.git"
+  },
+  "license": "MIT",
+  "author": "losdayver",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/lib/exports/exports.js",
+  "types": "./dist/types/exports/exports.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/exports/exports.d.ts",
-      "import": "./dist/lib/exports/exports.js"
-    }
+      "import": "./dist/lib/exports/exports.js",
+      "default": "./dist/lib/exports/exports.js"
+    },
+    "./styles.css": "./dist/lib/styles.css",
+    "./intrinsic.css": "./dist/lib/builtin/intrinsic.css",
+    "./data-form.css": "./dist/lib/builtin/data-form.css",
+    "./package.json": "./package.json"
   },
   "files": [
-    "dist/lib",
-    "dist/types"
+    "dist"
   ],
-  "keywords": [
-    "form",
-    "html-form",
-    "react-form"
-  ],
-  "author": "losdayver",
-  "license": "MIT",
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc && node scripts/build-assets.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/lib",
+    "format": "prettier --config .prettierrc --write .",
+    "format:check": "prettier --config .prettierrc --check .",
+    "check": "npm run format:check && npm run lint && npm run build",
+    "watch-dev": "vite",
+    "prepack": "npm run check",
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
@@ -45,7 +69,7 @@
     "vite": "^8.2.2"
   },
   "peerDependencies": {
-    "react": ">=16.0.0",
-    "react-dom": ">=16.0.0"
+    "react": ">=18.0.0 <20.0.0",
+    "react-dom": ">=18.0.0 <20.0.0"
   }
 }
