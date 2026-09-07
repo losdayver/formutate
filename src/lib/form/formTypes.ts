@@ -9,7 +9,7 @@ import {
   DescriptorsValueTypes,
   FormItemNotify,
   ItemDescriptor,
-} from "../formItem/formItemTypes";
+} from "../formItem/formItemTypes.js";
 
 export type FormSchema<KeysType extends object = Record<string, unknown>> =
   Record<Extract<keyof KeysType, string>, ItemDescriptor>;

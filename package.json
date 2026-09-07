@@ -1,23 +1,29 @@
 {
-  "name": "data-form",
-  "version": "1.0.0",
-  "description": "Component library agnostic and data centred UI form framework",
+  "name": "formutate",
+  "version": "0.1.0",
+  "description": "A data-first framework for building type-safe forms",
   "type": "module",
   "scripts": {
     "format": "npx prettier --config .prettierrc --write .",
     "lint": "npx eslint src",
     "watch-dev": "vite",
-    "build": "npx tsc",
-    "build-package": "npm run format && npm run lint && npx tsc && npm pack"
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc",
+    "prepack": "npm run build",
+    "build-package": "npm run format && npm run lint && npm pack"
   },
   "main": "dist/lib/exports/exports.js",
-  "types": "dist/lib/types",
+  "types": "dist/types/exports/exports.d.ts",
   "exports": {
     ".": {
-      "types": "dist/lib/types/exports/exports.d.ts",
-      "import": "dist/lib/exports/exports.js"
+      "types": "./dist/types/exports/exports.d.ts",
+      "import": "./dist/lib/exports/exports.js"
     }
   },
+  "files": [
+    "dist/lib",
+    "dist/types"
+  ],
   "keywords": [
     "form",
     "html-form",

@@ -2,8 +2,8 @@ import { Context, createContext, PropsWithChildren, useState } from "react";
 import {
   ComponentFactoryType,
   FormItemNotify,
-} from "../formItem/formItemTypes";
-import { FormProps, FormSchema, InferDataFromSchema } from "./formTypes";
+} from "../formItem/formItemTypes.js";
+import { FormProps, FormSchema, InferDataFromSchema } from "./formTypes.js";
 
 export type DataFormContextMediator<Schema> = {
   setFormData: React.Dispatch<

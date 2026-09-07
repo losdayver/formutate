@@ -1,13 +1,13 @@
 import { CSSProperties, PropsWithChildren, useContext } from "react";
-import { GFI, PreparedFormItem } from "../formItem/formItem";
-import { FormProps, FormSchema } from "./formTypes";
-import { BuiltinButton } from "../builtin/intrinsic/button";
+import { GFI, PreparedFormItem } from "../formItem/formItem.js";
+import { FormProps, FormSchema } from "./formTypes.js";
+import { BuiltinButton } from "../builtin/intrinsic/button.js";
 import {
   getDataFormContext,
   DataFormProvider,
   DataFormContextMediator,
-} from "./dataFormContext";
-import { buildGrid, GridGroup } from "./gridUtils";
+} from "./dataFormContext.js";
+import { buildGrid, GridGroup } from "./gridUtils.js";
 
 const formStyle = {
   display: "grid",

@@ -1,10 +1,10 @@
 import {
   ComponentFactoryType,
   ItemDescriptor,
-} from "../formItem/formItemTypes";
-import { BuiltinButton } from "./intrinsic/button";
-import { BuiltinCheckbox } from "./intrinsic/checkbox";
-import { BuiltinInput } from "./intrinsic/input";
+} from "../formItem/formItemTypes.js";
+import { BuiltinButton } from "./intrinsic/button.js";
+import { BuiltinCheckbox } from "./intrinsic/checkbox.js";
+import { BuiltinInput } from "./intrinsic/input.js";
 
 export const builtinComponentFactory: ComponentFactoryType = (
   descriptor: ItemDescriptor,
